@@ -15,13 +15,7 @@ export function createLogsController(logsElement) {
     renderLogs();
   }
 
-  function clearLogs() {
-    logs.length = 0;
-    renderLogs();
-  }
-
   return {
     appendLog,
-    clearLogs
   };
 }

@@ -1,51 +1,12 @@
-function distance(a, b) {
-  const dx = a.x - b.x;
-  const dy = a.y - b.y;
-  const dz = (a.z || 0) - (b.z || 0);
-
-  return Math.sqrt(dx * dx + dy * dy + dz * dz);
-}
-
-function isFingerExtended(landmarks, tipIndex, pipIndex) {
-  const tip = landmarks[tipIndex];
-  const pip = landmarks[pipIndex];
-  const wrist = landmarks[0];
-
-  return distance(tip, wrist) > distance(pip, wrist);
-}
-
-function isThumbUp(landmarks) {
-  const thumbTip = landmarks[4];
-  const thumbIp = landmarks[3];
-  const thumbMcp = landmarks[2];
-
-  return thumbTip.y < thumbIp.y && thumbIp.y < thumbMcp.y;
-}
-
-function getHorizontalDirection(landmarks) {
-  const indexMcp = landmarks[5];
-  const middleMcp = landmarks[9];
-  const indexTip = landmarks[8];
-  const middleTip = landmarks[12];
-
-  const tipCenterX = (indexTip.x + middleTip.x) / 2;
-  const baseCenterX = (indexMcp.x + middleMcp.x) / 2;
-  const deltaX = tipCenterX - baseCenterX;
-
-  if (Math.abs(deltaX) < 0.04) {
-    return "";
-  }
-
-  return deltaX > 0 ? "rechts" : "links";
-}
-
-function areFingertipsClose(landmarks) {
-  const indexTip = landmarks[8];
-  const middleTip = landmarks[12];
-  const handScale = distance(landmarks[0], landmarks[9]);
-
-  return distance(indexTip, middleTip) <= handScale * 0.35;
-}
+import {
+  areFingertipsClose,
+  distance,
+  getHorizontalDirection,
+  isFingerExtended,
+  isThumbExtended,
+  isThumbUp,
+  segmentsIntersect
+} from "./gestureCalculator.js";
 
 function classifyHandGesture(landmarks) {
   const thumbExtended = isThumbUp(landmarks);
@@ -90,4 +51,140 @@ export function detectHandGestures(landmarks, handLabel) {
   results.push(`${handLabel}: ${gesture} (${direction})`);
 
   return results;
+}
+
+function isThumbsUpHand(landmarks) {
+  const thumbUp = isThumbUp(landmarks);
+  const indexClosed = !isFingerExtended(landmarks, 8, 6);
+  const middleClosed = !isFingerExtended(landmarks, 12, 10);
+  const ringClosed = !isFingerExtended(landmarks, 16, 14);
+  const pinkyClosed = !isFingerExtended(landmarks, 20, 18);
+  const thumbTip = landmarks[4];
+  const thumbMcp = landmarks[2];
+  const thumbClearlyExtended = thumbTip.y < thumbMcp.y - 0.03;
+
+  return thumbUp && thumbClearlyExtended && indexClosed && middleClosed && ringClosed && pinkyClosed;
+}
+
+function areIndexFingersCrossed(leftLandmarks, rightLandmarks) {
+  if (!leftLandmarks || !rightLandmarks) {
+    return false;
+  }
+
+  const leftIndexMcp = leftLandmarks[5];
+  const leftIndexTip = leftLandmarks[8];
+  const rightIndexMcp = rightLandmarks[5];
+  const rightIndexTip = rightLandmarks[8];
+
+  if (!leftIndexMcp || !leftIndexTip || !rightIndexMcp || !rightIndexTip) {
+    return false;
+  }
+
+  const leftIndexExtended = isFingerExtended(leftLandmarks, 8, 6);
+  const rightIndexExtended = isFingerExtended(rightLandmarks, 8, 6);
+  const otherLeftClosed =
+    !isFingerExtended(leftLandmarks, 12, 10) &&
+    !isFingerExtended(leftLandmarks, 16, 14) &&
+    !isFingerExtended(leftLandmarks, 20, 18);
+  const otherRightClosed =
+    !isFingerExtended(rightLandmarks, 12, 10) &&
+    !isFingerExtended(rightLandmarks, 16, 14) &&
+    !isFingerExtended(rightLandmarks, 20, 18);
+  const fingersCrossed = segmentsIntersect(leftIndexMcp, leftIndexTip, rightIndexMcp, rightIndexTip);
+  const tipsClose = distance(leftIndexTip, rightIndexTip) <= Math.max(
+    distance(leftIndexMcp, leftIndexTip),
+    distance(rightIndexMcp, rightIndexTip)
+  ) * 0.9;
+
+  return leftIndexExtended && rightIndexExtended && otherLeftClosed && otherRightClosed && fingersCrossed && tipsClose;
+}
+
+export function createStartStopGestureController(logsController, options = {}) {
+  const state = {
+    startActive: false,
+    startFrames: 0,
+    startSince: 0,
+    startLogged: false,
+    stopActive: false,
+    stopFrames: 0,
+    stopSince: 0,
+    stopLogged: false
+  };
+
+  const gestureMinFrames = options.gestureMinFrames ?? 8;
+  const gestureMinDurationMs = options.gestureMinDurationMs ?? 500;
+  const onLog = options.onLog;
+
+  function emitLog(message) {
+    logsController.appendLog(message);
+
+    if (typeof onLog === "function") {
+      onLog(message);
+    }
+  }
+
+  function updateStartStopGestures(_poseLandmarks, leftHandLandmarks, rightHandLandmarks, now) {
+    const startCondition = !!leftHandLandmarks && !!rightHandLandmarks && isThumbsUpHand(leftHandLandmarks) && isThumbsUpHand(rightHandLandmarks);
+    const stopCondition = !!leftHandLandmarks && !!rightHandLandmarks && areIndexFingersCrossed(leftHandLandmarks, rightHandLandmarks);
+
+    if (startCondition) {
+      if (!state.startActive) {
+        state.startActive = true;
+        state.startFrames = 1;
+        state.startSince = now;
+        state.startLogged = false;
+        return;
+      }
+
+      state.startFrames += 1;
+
+      if (
+        !state.startLogged &&
+        state.startFrames >= gestureMinFrames &&
+        now - state.startSince >= gestureMinDurationMs
+      ) {
+        emitLog("Start");
+        state.startLogged = true;
+      }
+
+      return;
+    }
+
+    state.startActive = false;
+    state.startFrames = 0;
+    state.startSince = 0;
+    state.startLogged = false;
+
+    if (stopCondition) {
+      if (!state.stopActive) {
+        state.stopActive = true;
+        state.stopFrames = 1;
+        state.stopSince = now;
+        state.stopLogged = false;
+        return;
+      }
+
+      state.stopFrames += 1;
+
+      if (
+        !state.stopLogged &&
+        state.stopFrames >= gestureMinFrames &&
+        now - state.stopSince >= gestureMinDurationMs
+      ) {
+        emitLog("Stop");
+        state.stopLogged = true;
+      }
+
+      return;
+    }
+
+    state.stopActive = false;
+    state.stopFrames = 0;
+    state.stopSince = 0;
+    state.stopLogged = false;
+  }
+
+  return {
+    updateStartStopGestures
+  };
 }

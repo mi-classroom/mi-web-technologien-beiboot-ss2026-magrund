@@ -9,7 +9,8 @@ import {
   formatHandData
 } from "./formatters.js";
 import {
-  detectHandGestures
+  detectHandGestures,
+  createStartStopGestureController
 } from "./gestures.js";
 import {
   createLogsController
@@ -33,16 +34,23 @@ const rightHandData = document.getElementById("rightHandData");
 const logsElement = document.getElementById("logs");
 const forwardCountElement = document.getElementById("forwardCount");
 const backwardCountElement = document.getElementById("backwardCount");
+const startCountElement = document.getElementById("startCount");
+const stopCountElement = document.getElementById("stopCount");
 
 let lastTime = performance.now();
 
 const logs = createLogsController(logsElement);
 const gestureCounter = createGestureCounterController({
   forwardCountElement,
-  backwardCountElement
+  backwardCountElement,
+  startCountElement,
+  stopCountElement
 });
 const gestureLogs = createGestureLogsController(detectHandGestures, logs, {
   onStableLog: gestureCounter.countLog
+});
+const startStopGestures = createStartStopGestureController(logs, {
+  onLog: gestureCounter.countLog
 });
 
 async function setupCamera() {
@@ -120,6 +128,7 @@ async function predict() {
       video,
       startTimeMs
     );
+  const firstPoseLandmarks = results.poseLandmarks?.[0];
   const firstLeftHandLandmarks = results.leftHandLandmarks?.[0];
   const firstRightHandLandmarks = results.rightHandLandmarks?.[0];
 
@@ -201,6 +210,12 @@ async function predict() {
   }
 
   gestureLogs.updateGestureLogs(firstLeftHandLandmarks, firstRightHandLandmarks, startTimeMs);
+  startStopGestures.updateStartStopGestures(
+    firstPoseLandmarks,
+    firstLeftHandLandmarks,
+    firstRightHandLandmarks,
+    startTimeMs
+  );
 
   renderFPS();
 
