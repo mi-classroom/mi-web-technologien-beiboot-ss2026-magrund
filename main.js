@@ -17,6 +17,9 @@ import {
 import {
   createGestureLogsController
 } from "./gestureLogs.js";
+import {
+  createGestureCounterController
+} from "./gestureCounter.js";
 
 const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
@@ -28,11 +31,19 @@ const poseData = document.getElementById("poseData");
 const leftHandData = document.getElementById("leftHandData");
 const rightHandData = document.getElementById("rightHandData");
 const logsElement = document.getElementById("logs");
+const forwardCountElement = document.getElementById("forwardCount");
+const backwardCountElement = document.getElementById("backwardCount");
 
 let lastTime = performance.now();
 
 const logs = createLogsController(logsElement);
-const gestureLogs = createGestureLogsController(detectHandGestures, logs);
+const gestureCounter = createGestureCounterController({
+  forwardCountElement,
+  backwardCountElement
+});
+const gestureLogs = createGestureLogsController(detectHandGestures, logs, {
+  onStableLog: gestureCounter.countLog
+});
 
 async function setupCamera() {
   const stream =

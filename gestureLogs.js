@@ -8,6 +8,7 @@ export function createGestureLogsController(detectHandGestures, logsController, 
 
   const gestureMinFrames = options.gestureMinFrames ?? 8;
   const gestureMinDurationMs = options.gestureMinDurationMs ?? 500;
+  const onStableLog = options.onStableLog;
 
   function updateGestureLogs(leftHandLandmarks, rightHandLandmarks, now) {
     const gestureMessages = [];
@@ -46,7 +47,12 @@ export function createGestureLogsController(detectHandGestures, logsController, 
       now - state.stableGestureSince >= gestureMinDurationMs
     ) {
       state.stableGestureLogged = true;
-      logsController.appendLog(gestureMessages.join("; "));
+      const message = gestureMessages.join("; ");
+      logsController.appendLog(message);
+
+      if (typeof onStableLog === "function") {
+        onStableLog(message);
+      }
     }
   }
 

@@ -12,11 +12,54 @@ body {
   overflow: hidden;
 }
 
-.camera-window {
+.left-panel {
   width: 60%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.camera-window {
+  flex: 1;
   position: relative;
   background: black;
   overflow: hidden;
+}
+
+.gesture-counter {
+  margin: 10px;
+  min-height: 120px;
+  align-items: stretch;
+}
+
+.counter-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.counter-item {
+  background: #1b1b1b;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.counter-item span {
+  color: #b8b8b8;
+  font-size: 13px;
+}
+
+.counter-item strong {
+  font-size: 30px;
+  line-height: 1;
+  color: #00ff88;
 }
 
 video,

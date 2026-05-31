@@ -9,10 +9,26 @@
 </head>
 
 <body>
-  <div class="camera-window">
-    <video id="video" autoplay playsinline>
-    </video>
-    <canvas id="canvas"></canvas>
+  <div class="left-panel">
+    <div class="camera-window">
+      <video id="video" autoplay playsinline>
+      </video>
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="gesture-counter card">
+      <h2>Gesture Counter</h2>
+      <div class="counter-grid">
+        <div class="counter-item">
+          <span>Gehe Vor</span>
+          <strong id="forwardCount">0</strong>
+        </div>
+        <div class="counter-item">
+          <span>Gehe Zurück</span>
+          <strong id="backwardCount">0</strong>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="info-window">
