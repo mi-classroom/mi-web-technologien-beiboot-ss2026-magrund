@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Marcel Grund Beiboot Projekt</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 
 <body>
   <div class="camera-window">
-    <video
-      id="video"
-      autoplay
-      playsinline>
+    <video id="video" autoplay playsinline>
     </video>
     <canvas id="canvas"></canvas>
   </div>
@@ -37,10 +32,13 @@
       <h2>Body Tracking</h2>
       <pre id="poseData"></pre>
     </div>
+    <div class="card log-card">
+      <h2>Logs</h2>
+      <pre class="log-text" id="logs"></pre>
+    </div>
   </div>
-  <script
-    type="module"
-    src="./main.js">
+  <script type="module" src="./main.js">
   </script>
 </body>
+
 </html>

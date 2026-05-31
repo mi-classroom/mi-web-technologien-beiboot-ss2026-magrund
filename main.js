@@ -8,6 +8,15 @@ import {
   formatBodyData,
   formatHandData
 } from "./formatters.js";
+import {
+  detectHandGestures
+} from "./gestures.js";
+import {
+  createLogsController
+} from "./logs.js";
+import {
+  createGestureLogsController
+} from "./gestureLogs.js";
 
 const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
@@ -18,8 +27,12 @@ const fpsElement = document.getElementById("fps");
 const poseData = document.getElementById("poseData");
 const leftHandData = document.getElementById("leftHandData");
 const rightHandData = document.getElementById("rightHandData");
+const logsElement = document.getElementById("logs");
 
 let lastTime = performance.now();
+
+const logs = createLogsController(logsElement);
+const gestureLogs = createGestureLogsController(detectHandGestures, logs);
 
 async function setupCamera() {
   const stream =
@@ -96,6 +109,8 @@ async function predict() {
       video,
       startTimeMs
     );
+  const firstLeftHandLandmarks = results.leftHandLandmarks?.[0];
+  const firstRightHandLandmarks = results.rightHandLandmarks?.[0];
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -173,6 +188,8 @@ async function predict() {
         formatHandData(landmarks);
     }
   }
+
+  gestureLogs.updateGestureLogs(firstLeftHandLandmarks, firstRightHandLandmarks, startTimeMs);
 
   renderFPS();
 
