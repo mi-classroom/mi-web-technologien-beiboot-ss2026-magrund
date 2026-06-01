@@ -3,12 +3,15 @@ import {
   distance,
   getHorizontalDirection,
   isFingerExtended,
-  isThumbExtended,
   isThumbUp,
   segmentsIntersect
 } from "./gestureCalculator.js";
 
-function classifyHandGesture(landmarks) {
+function buildGestureMessage(handLabel, gestureLabel, direction) {
+  return `${handLabel}: ${gestureLabel} (${direction})`;
+}
+
+function classifyPistolGesture(landmarks) {
   const thumbExtended = isThumbUp(landmarks);
   const indexExtended = isFingerExtended(landmarks, 8, 6);
   const middleExtended = isFingerExtended(landmarks, 12, 10);
@@ -27,15 +30,15 @@ function classifyHandGesture(landmarks) {
     return "Pistol";
   }
 
-  return "";
+  return null;
 }
 
 function describeDirection(landmarks) {
   return getHorizontalDirection(landmarks);
 }
 
-export function detectHandGestures(landmarks, handLabel) {
-  const gesture = classifyHandGesture(landmarks);
+export function detectPistolGesture(landmarks, handLabel) {
+  const gesture = classifyPistolGesture(landmarks);
 
   if (!gesture) {
     return [];
@@ -47,13 +50,10 @@ export function detectHandGestures(landmarks, handLabel) {
     return [];
   }
 
-  const results = [];
-  results.push(`${handLabel}: ${gesture} (${direction})`);
-
-  return results;
+  return [buildGestureMessage(handLabel, gesture, direction)];
 }
 
-function isThumbsUpHand(landmarks) {
+function classifyThumbsUpGesture(landmarks) {
   const thumbUp = isThumbUp(landmarks);
   const indexClosed = !isFingerExtended(landmarks, 8, 6);
   const middleClosed = !isFingerExtended(landmarks, 12, 10);
@@ -63,12 +63,55 @@ function isThumbsUpHand(landmarks) {
   const thumbMcp = landmarks[2];
   const thumbClearlyExtended = thumbTip.y < thumbMcp.y - 0.03;
 
-  return thumbUp && thumbClearlyExtended && indexClosed && middleClosed && ringClosed && pinkyClosed;
+  if (thumbUp && thumbClearlyExtended && indexClosed && middleClosed && ringClosed && pinkyClosed) {
+    return "Start";
+  }
+
+  return null;
 }
 
-function areIndexFingersCrossed(leftLandmarks, rightLandmarks) {
+function createTimedGestureState() {
+  return {
+    active: false,
+    frames: 0,
+    since: 0,
+    logged: false
+  };
+}
+
+function resetTimedGestureState(state) {
+  state.active = false;
+  state.frames = 0;
+  state.since = 0;
+  state.logged = false;
+}
+
+function updateTimedGestureState(state, isActive, now, minFrames, minDurationMs, message, emitLog) {
+  if (isActive) {
+    if (!state.active) {
+      state.active = true;
+      state.frames = 1;
+      state.since = now;
+      state.logged = false;
+      return;
+    }
+
+    state.frames += 1;
+
+    if (!state.logged && state.frames >= minFrames && now - state.since >= minDurationMs) {
+      emitLog(message);
+      state.logged = true;
+    }
+
+    return;
+  }
+
+  resetTimedGestureState(state);
+}
+
+function classifyIndexFingerCrossedGesture(leftLandmarks, rightLandmarks) {
   if (!leftLandmarks || !rightLandmarks) {
-    return false;
+    return null;
   }
 
   const leftIndexMcp = leftLandmarks[5];
@@ -77,7 +120,7 @@ function areIndexFingersCrossed(leftLandmarks, rightLandmarks) {
   const rightIndexTip = rightLandmarks[8];
 
   if (!leftIndexMcp || !leftIndexTip || !rightIndexMcp || !rightIndexTip) {
-    return false;
+    return null;
   }
 
   const leftIndexExtended = isFingerExtended(leftLandmarks, 8, 6);
@@ -96,19 +139,17 @@ function areIndexFingersCrossed(leftLandmarks, rightLandmarks) {
     distance(rightIndexMcp, rightIndexTip)
   ) * 0.9;
 
-  return leftIndexExtended && rightIndexExtended && otherLeftClosed && otherRightClosed && fingersCrossed && tipsClose;
+  if (leftIndexExtended && rightIndexExtended && otherLeftClosed && otherRightClosed && fingersCrossed && tipsClose) {
+    return "Stop";
+  }
+
+  return null;
 }
 
 export function createStartStopGestureController(logsController, options = {}) {
   const state = {
-    startActive: false,
-    startFrames: 0,
-    startSince: 0,
-    startLogged: false,
-    stopActive: false,
-    stopFrames: 0,
-    stopSince: 0,
-    stopLogged: false
+    start: createTimedGestureState(),
+    stop: createTimedGestureState()
   };
 
   const gestureMinFrames = options.gestureMinFrames ?? 15;
@@ -124,64 +165,20 @@ export function createStartStopGestureController(logsController, options = {}) {
   }
 
   function updateStartStopGestures(_poseLandmarks, leftHandLandmarks, rightHandLandmarks, now) {
-    const startCondition = !!leftHandLandmarks && !!rightHandLandmarks && isThumbsUpHand(leftHandLandmarks) && isThumbsUpHand(rightHandLandmarks);
-    const stopCondition = !!leftHandLandmarks && !!rightHandLandmarks && areIndexFingersCrossed(leftHandLandmarks, rightHandLandmarks);
+    const hasBothHands = !!leftHandLandmarks && !!rightHandLandmarks;
+    const startGesture = hasBothHands
+      ? classifyThumbsUpGesture(leftHandLandmarks) && classifyThumbsUpGesture(rightHandLandmarks)
+      : null;
+    const stopGesture = hasBothHands ? classifyIndexFingerCrossedGesture(leftHandLandmarks, rightHandLandmarks) : null;
 
-    if (startCondition) {
-      if (!state.startActive) {
-        state.startActive = true;
-        state.startFrames = 1;
-        state.startSince = now;
-        state.startLogged = false;
-        return;
-      }
+    updateTimedGestureState(state.start, !!startGesture, now, gestureMinFrames, gestureMinDurationMs, "Start", emitLog);
 
-      state.startFrames += 1;
-
-      if (
-        !state.startLogged &&
-        state.startFrames >= gestureMinFrames &&
-        now - state.startSince >= gestureMinDurationMs
-      ) {
-        emitLog("Start");
-        state.startLogged = true;
-      }
-
+    if (startGesture) {
+      resetTimedGestureState(state.stop);
       return;
     }
 
-    state.startActive = false;
-    state.startFrames = 0;
-    state.startSince = 0;
-    state.startLogged = false;
-
-    if (stopCondition) {
-      if (!state.stopActive) {
-        state.stopActive = true;
-        state.stopFrames = 1;
-        state.stopSince = now;
-        state.stopLogged = false;
-        return;
-      }
-
-      state.stopFrames += 1;
-
-      if (
-        !state.stopLogged &&
-        state.stopFrames >= gestureMinFrames &&
-        now - state.stopSince >= gestureMinDurationMs
-      ) {
-        emitLog("Stop");
-        state.stopLogged = true;
-      }
-
-      return;
-    }
-
-    state.stopActive = false;
-    state.stopFrames = 0;
-    state.stopSince = 0;
-    state.stopLogged = false;
+    updateTimedGestureState(state.stop, !!stopGesture, now, gestureMinFrames, gestureMinDurationMs, "Stop", emitLog);
   }
 
   return {

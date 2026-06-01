@@ -9,7 +9,7 @@ import {
   formatHandData
 } from "./formatters.js";
 import {
-  detectHandGestures,
+  detectPistolGesture,
   createStartStopGestureController
 } from "./gestures.js";
 import {
@@ -46,7 +46,7 @@ const gestureCounter = createGestureCounterController({
   startCountElement,
   stopCountElement
 });
-const gestureLogs = createGestureLogsController(detectHandGestures, logs, {
+const gestureLogs = createGestureLogsController(detectPistolGesture, logs, {
   onStableLog: gestureCounter.countLog
 });
 const startStopGestures = createStartStopGestureController(logs, {

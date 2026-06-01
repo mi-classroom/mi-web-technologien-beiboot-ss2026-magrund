@@ -1,60 +1,62 @@
-export function createGestureLogsController(detectHandGestures, logsController, options = {}) {
+export function createGestureLogsController(detectPistolGesture, logsController, options = {}) {
   const state = {
-    stableGestureSignature: "",
-    stableGestureSince: 0,
-    stableGestureFrames: 0,
-    stableGestureLogged: false
+    signature: "",
+    since: 0,
+    frames: 0,
+    logged: false
   };
 
   const gestureMinFrames = options.gestureMinFrames ?? 8;
   const gestureMinDurationMs = options.gestureMinDurationMs ?? 500;
   const onStableLog = options.onStableLog;
 
-  function updateGestureLogs(leftHandLandmarks, rightHandLandmarks, now) {
-    const gestureMessages = [];
+  function resetStableGestureState() {
+    state.signature = "";
+    state.since = 0;
+    state.frames = 0;
+    state.logged = false;
+  }
 
-    if (leftHandLandmarks) {
-      gestureMessages.push(...detectHandGestures(leftHandLandmarks, "Left"));
-    }
-
-    if (rightHandLandmarks) {
-      gestureMessages.push(...detectHandGestures(rightHandLandmarks, "Right"));
-    }
-
-    const gestureSignature = gestureMessages.join(" | ");
-
-    if (!gestureSignature) {
-      state.stableGestureSignature = "";
-      state.stableGestureSince = 0;
-      state.stableGestureFrames = 0;
-      state.stableGestureLogged = false;
+  function updateStableGestureState(signature, now, message) {
+    if (!signature) {
+      resetStableGestureState();
       return;
     }
 
-    if (gestureSignature !== state.stableGestureSignature) {
-      state.stableGestureSignature = gestureSignature;
-      state.stableGestureSince = now;
-      state.stableGestureFrames = 1;
-      state.stableGestureLogged = false;
+    if (signature !== state.signature) {
+      state.signature = signature;
+      state.since = now;
+      state.frames = 1;
+      state.logged = false;
       return;
     }
 
-    state.stableGestureFrames += 1;
+    state.frames += 1;
 
-    if (
-      !state.stableGestureLogged &&
-      state.stableGestureFrames >= gestureMinFrames &&
-      now - state.stableGestureSince >= gestureMinDurationMs
-    ) {
-      state.stableGestureLogged = true;
-      const message = gestureMessages.join("; ");
-
+    if (!state.logged && state.frames >= gestureMinFrames && now - state.since >= gestureMinDurationMs) {
+      state.logged = true;
       logsController.appendLog(message);
 
       if (typeof onStableLog === "function") {
         onStableLog(message);
       }
     }
+  }
+
+  function updateGestureLogs(leftHandLandmarks, rightHandLandmarks, now) {
+    const gestureMessages = [];
+
+    if (leftHandLandmarks) {
+      gestureMessages.push(...detectPistolGesture(leftHandLandmarks, "Left"));
+    }
+
+    if (rightHandLandmarks) {
+      gestureMessages.push(...detectPistolGesture(rightHandLandmarks, "Right"));
+    }
+
+    const gestureSignature = gestureMessages.join(" | ");
+
+    updateStableGestureState(gestureSignature, now, gestureMessages.join("; "));
   }
 
   return {
