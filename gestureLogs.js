@@ -14,11 +14,11 @@ export function createGestureLogsController(detectHandGestures, logsController, 
     const gestureMessages = [];
 
     if (leftHandLandmarks) {
-      gestureMessages.push(...detectHandGestures(leftHandLandmarks, "Links"));
+      gestureMessages.push(...detectHandGestures(leftHandLandmarks, "Left"));
     }
 
     if (rightHandLandmarks) {
-      gestureMessages.push(...detectHandGestures(rightHandLandmarks, "Rechts"));
+      gestureMessages.push(...detectHandGestures(rightHandLandmarks, "Right"));
     }
 
     const gestureSignature = gestureMessages.join(" | ");
@@ -48,6 +48,7 @@ export function createGestureLogsController(detectHandGestures, logsController, 
     ) {
       state.stableGestureLogged = true;
       const message = gestureMessages.join("; ");
+
       logsController.appendLog(message);
 
       if (typeof onStableLog === "function") {

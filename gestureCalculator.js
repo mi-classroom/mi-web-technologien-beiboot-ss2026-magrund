@@ -44,7 +44,7 @@ export function getHorizontalDirection(landmarks) {
     return "";
   }
 
-  return deltaX > 0 ? "rechts" : "links";
+  return deltaX > 0 ? "Back" : "Forward";
 }
 
 export function areFingertipsClose(landmarks) {

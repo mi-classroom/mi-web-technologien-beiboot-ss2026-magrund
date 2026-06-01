@@ -24,7 +24,7 @@ function classifyHandGesture(landmarks) {
     !ringExtended &&
     !pinkyExtended
   ) {
-    return "Pistole";
+    return "Pistol";
   }
 
   return "";
@@ -111,8 +111,8 @@ export function createStartStopGestureController(logsController, options = {}) {
     stopLogged: false
   };
 
-  const gestureMinFrames = options.gestureMinFrames ?? 8;
-  const gestureMinDurationMs = options.gestureMinDurationMs ?? 500;
+  const gestureMinFrames = options.gestureMinFrames ?? 15;
+  const gestureMinDurationMs = options.gestureMinDurationMs ?? 1000;
   const onLog = options.onLog;
 
   function emitLog(message) {

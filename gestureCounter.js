@@ -1,10 +1,10 @@
 function getGestureAction(gestureMessage) {
-  if (gestureMessage.includes("Pistole (links)")) {
-    return "vor";
+  if (gestureMessage.includes("Pistol (Forward)")) {
+    return "forward";
   }
 
-  if (gestureMessage.includes("Pistole (rechts)")) {
-    return "zurueck";
+  if (gestureMessage.includes("Pistol (Back)")) {
+    return "backward";
   }
 
   if (gestureMessage.startsWith("Start")) {
@@ -21,8 +21,8 @@ function getGestureAction(gestureMessage) {
 export function createGestureCounterController(elements) {
   const state = {
     counts: {
-      vor: 0,
-      zurueck: 0,
+      forward: 0,
+      backward: 0,
       start: 0,
       stop: 0
     }
@@ -30,11 +30,11 @@ export function createGestureCounterController(elements) {
 
   function renderCounts() {
     if (elements.forwardCountElement) {
-      elements.forwardCountElement.textContent = String(state.counts.vor);
+      elements.forwardCountElement.textContent = String(state.counts.forward);
     }
 
     if (elements.backwardCountElement) {
-      elements.backwardCountElement.textContent = String(state.counts.zurueck);
+      elements.backwardCountElement.textContent = String(state.counts.backward);
     }
 
     if (elements.startCountElement) {
