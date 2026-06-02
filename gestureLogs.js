@@ -6,8 +6,8 @@ export function createGestureLogsController(detectPistolGesture, logsController,
     logged: false
   };
 
-  const gestureMinFrames = options.gestureMinFrames ?? 8;
-  const gestureMinDurationMs = options.gestureMinDurationMs ?? 500;
+  const gestureMinFrames = options.gestureMinFrames ?? 15;
+  const gestureMinDurationMs = options.gestureMinDurationMs ?? 1000;
   const onStableLog = options.onStableLog;
 
   function resetStableGestureState() {
