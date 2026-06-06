@@ -1,27 +1,11 @@
-import {
-  PoseLandmarker,
-  HandLandmarker,
-  FilesetResolver,
-  DrawingUtils
-} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest";
-
-import {
-  formatBodyData,
-  formatHandData
-} from "./formatters.js";
-import {
-  detectPistolGesture,
-  createStartStopGestureController
-} from "./gestures.js";
-import {
-  createLogsController
-} from "./logs.js";
-import {
-  createGestureLogsController
-} from "./gestureLogs.js";
-import {
-  createGestureCounterController
-} from "./gestureCounter.js";
+import { PoseLandmarker, HandLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest";
+import { createPoseRenderer } from "./renderer/poseRenderer.js";
+import { createHandRenderer } from "./renderer/handRenderer.js";
+import { formatBodyData, formatHandData } from "./formatters.js";
+import { detectPistolGesture, createStartStopGestureController } from "./gestures.js";
+import { createLogsController } from "./logs.js";
+import { createGestureLogsController } from "./gestureLogs.js";
+import { createGestureCounterController } from "./gestureCounter.js";
 
 const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
@@ -120,115 +104,13 @@ const {
 canvas.width = video.videoWidth;
 canvas.height = video.videoHeight;
 
+const poseRenderer =
+  createPoseRenderer(ctx, canvas);
+
+const handRenderer =
+  createHandRenderer(ctx, canvas);
+
 const drawingUtils = new DrawingUtils(ctx);
-
-function segmentColor(index) {
-  if (index <= 10) return "#4fc3f7";
-  if (index <= 22) return "#00ff88";
-  return "#ffb300";
-}
-
-function drawSkeleton(landmarks) {
-  const w = canvas.width;
-  const h = canvas.height;
-
-  const px = (lm) => lm.x * w;
-  const py = (lm) => lm.y * h;
-
-  ctx.lineWidth = 4;
-  for (const conn of PoseLandmarker.POSE_CONNECTIONS) {
-    const a = landmarks[conn.start];
-    const b = landmarks[conn.end];
-
-    if (!a || !b || a.visibility < 0.5 || b.visibility < 0.5) continue;
-
-    ctx.strokeStyle = segmentColor(conn.start);
-    ctx.beginPath();
-    ctx.moveTo(px(a), py(a));
-    ctx.lineTo(px(b), py(b));
-    ctx.stroke();
-  }
-
-  ctx.font = "bold 16px Arial";
-
-  for (let i = 0; i < landmarks.length; i += 1) {
-    const lm = landmarks[i];
-
-    if (lm.visibility < 0.5) continue;
-
-    const x = px(lm);
-    const y = py(lm);
-
-    ctx.fillStyle = segmentColor(i);
-    ctx.beginPath();
-    ctx.arc(x, y, 8, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.scale(-1, 1);
-
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText(String(i), -7, 4);
-
-    ctx.restore();
-  }
-}
-
-const HAND_COLORS = {
-  Left: "#ff0000",
-  Right: "#ffea00"
-};
-
-function drawHands(allLandmarks, handedness) {
-  const w = canvas.width;
-  const h = canvas.height;
-
-  const px = (lm) => lm.x * w;
-  const py = (lm) => lm.y * h;
-
-  ctx.shadowColor = '#000000';
-  ctx.shadowBlur = 8;
-  ctx.font = "bold 16px Arial";
-
-  for (let hi = 0; hi < allLandmarks.length; hi += 1) {
-    const landmarks = allLandmarks[hi];
-    const label = handedness[hi]?.[0]?.categoryName ?? "Left";
-    const color = HAND_COLORS[label] ?? "#ff0000";
-
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 4;
-    for (const conn of HandLandmarker.HAND_CONNECTIONS) {
-      const a = landmarks[conn.start];
-      const b = landmarks[conn.end];
-      if (!a || !b) continue;
-      ctx.beginPath();
-      ctx.moveTo(px(a), py(a));
-      ctx.lineTo(px(b), py(b));
-      ctx.stroke();
-    }
-
-    for (let i = 0; i < landmarks.length; i += 1) {
-      const lm = landmarks[i];
-      const x = px(lm);
-      const y = py(lm);
-
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(x, y, 8, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.scale(-1, 1);
-
-      ctx.fillStyle = "#ffffff";
-      ctx.fillText(String(i), -5, 4);
-
-      ctx.restore();
-    }
-  }
-}
 
 function renderFPS() {
   const now = performance.now();
@@ -273,13 +155,16 @@ async function predict() {
 
   if (results.landmarks) {
     for (const landmarks of results.landmarks) {
-      drawSkeleton(landmarks);
+      poseRenderer.draw(landmarks);
       poseData.textContent = formatBodyData(landmarks);
     }
   }
 
   if (handResult.landmarks) {
-    drawHands(handResult.landmarks, handResult.handedness);
+    handRenderer.draw(
+      handResult.landmarks,
+      handResult.handedness
+    );
 
     for (let i = 0; i < handResult.landmarks.length; i += 1) {
       const landmarks = handResult.landmarks[i];
