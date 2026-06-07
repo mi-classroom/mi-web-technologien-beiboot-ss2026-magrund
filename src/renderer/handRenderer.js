@@ -1,9 +1,8 @@
-import { HandLandmarker }
-  from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest";
+import { HandLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest";
 
 const HAND_COLORS = {
   Left: "#ff0000",
-  Right: "#ffea00"
+  Right: "#ffea00",
 };
 
 export function createHandRenderer(ctx, canvas) {
@@ -18,11 +17,9 @@ export function createHandRenderer(ctx, canvas) {
     for (let hi = 0; hi < allLandmarks.length; hi += 1) {
       const landmarks = allLandmarks[hi];
 
-      const label =
-        handedness[hi]?.[0]?.categoryName ?? "Left";
+      const label = handedness[hi]?.[0]?.categoryName ?? "Left";
 
-      const color =
-        HAND_COLORS[label] ?? "#ff0000";
+      const color = HAND_COLORS[label] ?? "#ff0000";
 
       ctx.strokeStyle = color;
       ctx.lineWidth = 4;
@@ -65,6 +62,6 @@ export function createHandRenderer(ctx, canvas) {
   }
 
   return {
-    draw
+    draw,
   };
 }

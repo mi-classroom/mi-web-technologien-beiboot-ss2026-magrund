@@ -1,5 +1,4 @@
-import { PoseLandmarker }
-  from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest";
+import { PoseLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest";
 
 function segmentColor(index) {
   if (index <= 10) return "#4fc3f7";
@@ -58,6 +57,6 @@ export function createPoseRenderer(ctx, canvas) {
   }
 
   return {
-    draw
+    draw,
   };
 }

@@ -1,8 +1,6 @@
 function getGestureAction(result) {
   if (result.gesture === "Pistol") {
-    return result.data.direction === "Forward"
-      ? "forward"
-      : "backward";
+    return result.data.direction === "Forward" ? "forward" : "backward";
   }
 
   if (result.gesture === "ThumbsUp") {
@@ -22,35 +20,30 @@ export function createGestureCounterController(elements) {
       forward: 0,
       backward: 0,
       start: 0,
-      stop: 0
-    }
+      stop: 0,
+    },
   };
 
   function renderCounts() {
     if (elements.forwardCountElement) {
-      elements.forwardCountElement.textContent =
-        String(state.counts.forward);
+      elements.forwardCountElement.textContent = String(state.counts.forward);
     }
 
     if (elements.backwardCountElement) {
-      elements.backwardCountElement.textContent =
-        String(state.counts.backward);
+      elements.backwardCountElement.textContent = String(state.counts.backward);
     }
 
     if (elements.startCountElement) {
-      elements.startCountElement.textContent =
-        String(state.counts.start);
+      elements.startCountElement.textContent = String(state.counts.start);
     }
 
     if (elements.stopCountElement) {
-      elements.stopCountElement.textContent =
-        String(state.counts.stop);
+      elements.stopCountElement.textContent = String(state.counts.stop);
     }
   }
 
   function countGesture(result) {
-    const action =
-      getGestureAction(result);
+    const action = getGestureAction(result);
 
     if (!action) {
       return;
@@ -64,6 +57,6 @@ export function createGestureCounterController(elements) {
   renderCounts();
 
   return {
-    countGesture
+    countGesture,
   };
 }

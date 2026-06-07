@@ -2,30 +2,21 @@ import {
   areFingertipsClose,
   getHorizontalDirection,
   isFingerExtended,
-  isThumbUp
+  isThumbUp,
 } from "../gestureCalculator.js";
 
-export function detectPistolGesture(
-  landmarks,
-  hand
-) {
-  const thumbExtended =
-    isThumbUp(landmarks);
+export function detectPistolGesture(landmarks, hand) {
+  const thumbExtended = isThumbUp(landmarks);
 
-  const indexExtended =
-    isFingerExtended(landmarks, 8, 6);
+  const indexExtended = isFingerExtended(landmarks, 8, 6);
 
-  const middleExtended =
-    isFingerExtended(landmarks, 12, 10);
+  const middleExtended = isFingerExtended(landmarks, 12, 10);
 
-  const ringExtended =
-    isFingerExtended(landmarks, 16, 14);
+  const ringExtended = isFingerExtended(landmarks, 16, 14);
 
-  const pinkyExtended =
-    isFingerExtended(landmarks, 20, 18);
+  const pinkyExtended = isFingerExtended(landmarks, 20, 18);
 
-  const fingertipsClose =
-    areFingertipsClose(landmarks);
+  const fingertipsClose = areFingertipsClose(landmarks);
 
   const isPistol =
     thumbExtended &&
@@ -35,16 +26,13 @@ export function detectPistolGesture(
     !ringExtended &&
     !pinkyExtended;
 
-  const direction =
-    isPistol
-      ? getHorizontalDirection(landmarks)
-      : null;
+  const direction = isPistol ? getHorizontalDirection(landmarks) : null;
 
   if (!isPistol || !direction) {
     return {
       detected: false,
       gesture: "Pistol",
-      data: {}
+      data: {},
     };
   }
 
@@ -53,7 +41,7 @@ export function detectPistolGesture(
     gesture: "Pistol",
     data: {
       hand,
-      direction
-    }
+      direction,
+    },
   };
 }

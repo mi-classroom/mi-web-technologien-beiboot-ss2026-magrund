@@ -1,13 +1,9 @@
-function getGestureSignature(
-  gesture
-) {
+function getGestureSignature(gesture) {
   switch (gesture.gesture) {
     case "Pistol":
-      return [
-        gesture.gesture,
-        gesture.data.hand,
-        gesture.data.direction
-      ].join(":");
+      return [gesture.gesture, gesture.data.hand, gesture.data.direction].join(
+        ":",
+      );
 
     case "ThumbsUp":
       return gesture.gesture;
@@ -20,69 +16,43 @@ function getGestureSignature(
   }
 }
 
-export function createGestureTracker(
-  options = {}
-) {
-  const minDurationMs =
-    options.minDurationMs ?? 1000;
+export function createGestureTracker(options = {}) {
+  const minDurationMs = options.minDurationMs ?? 1000;
 
   const state = new Map();
 
-  function update(
-    gestures,
-    now
-  ) {
+  function update(gestures, now) {
     const stableGestures = [];
 
-    const activeSignatures =
-      new Set();
+    const activeSignatures = new Set();
 
     for (const gesture of gestures) {
-      const signature =
-        getGestureSignature(
-          gesture
-        );
+      const signature = getGestureSignature(gesture);
 
-      activeSignatures.add(
-        signature
-      );
+      activeSignatures.add(signature);
 
-      let gestureState =
-        state.get(signature);
+      let gestureState = state.get(signature);
 
       if (!gestureState) {
-        state.set(
-          signature,
-          {
-            since: now,
-            emitted: false
-          }
-        );
+        state.set(signature, {
+          since: now,
+          emitted: false,
+        });
 
         continue;
       }
 
-      const duration =
-        now - gestureState.since;
+      const duration = now - gestureState.since;
 
-      if (
-        !gestureState.emitted &&
-        duration >= minDurationMs
-      ) {
+      if (!gestureState.emitted && duration >= minDurationMs) {
         gestureState.emitted = true;
 
-        stableGestures.push(
-          gesture
-        );
+        stableGestures.push(gesture);
       }
     }
 
     for (const signature of state.keys()) {
-      if (
-        !activeSignatures.has(
-          signature
-        )
-      ) {
+      if (!activeSignatures.has(signature)) {
         state.delete(signature);
       }
     }
@@ -91,6 +61,6 @@ export function createGestureTracker(
   }
 
   return {
-    update
+    update,
   };
 }

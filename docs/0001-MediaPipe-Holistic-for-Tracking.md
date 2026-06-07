@@ -1,10 +1,10 @@
 # MediaPipe Holistic for Tracking
 
-* Status: accepted
-* Workload: 6h
-* Decider: [Marcel Grund](https://github.com/MaGrund)
-* Issue: [1](https://github.com/mi-classroom/mi-web-technologien-beiboot-ss2026-magrund/issues/1)
-* Date: 2026-05-18
+- Status: accepted
+- Workload: 6h
+- Decider: [Marcel Grund](https://github.com/MaGrund)
+- Issue: [1](https://github.com/mi-classroom/mi-web-technologien-beiboot-ss2026-magrund/issues/1)
+- Date: 2026-05-18
 
 ## Context and Problem Statement
 
@@ -12,9 +12,9 @@ The task is to select a machine learning library and use it to display live body
 
 ## Considered Options
 
-* MediaPipe
-* YOLO
-* MoveNet (TensorFlow.js)
+- MediaPipe
+- YOLO
+- MoveNet (TensorFlow.js)
 
 ## Decision Outcome
 
@@ -39,6 +39,6 @@ In the browser interface, the left side displays the live camera feed with the e
 
 ## Links
 
-* https://github.com/google-ai-edge/mediapipe/blob/master/docs/solutions/holistic.md
-* https://docs.ultralytics.com/models
-* https://blog.tensorflow.org/2021/05/next-generation-pose-detection-with-movenet-and-tensorflowjs.html
+- https://github.com/google-ai-edge/mediapipe/blob/master/docs/solutions/holistic.md
+- https://docs.ultralytics.com/models
+- https://blog.tensorflow.org/2021/05/next-generation-pose-detection-with-movenet-and-tensorflowjs.html

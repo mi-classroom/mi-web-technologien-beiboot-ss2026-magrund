@@ -1,0 +1,14 @@
+node_modules/
+
+# Logs
+npm-debug.log*
+
+# Betriebssystem
+.DS_Store
+Thumbs.db
+
+# VS Code (optional)
+.vscode/
+
+# Coverage/Testreports (falls später genutzt)
+coverage/

@@ -1,68 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marcel Grund Beiboot Projekt</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marcel Grund Beiboot Projekt</title>
-  <link rel="stylesheet" href="./styles.css" />
-</head>
+  <body>
+    <div class="left-panel">
+      <div class="camera-window">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
+      </div>
 
-<body>
-  <div class="left-panel">
-    <div class="camera-window">
-      <video id="video" autoplay playsinline>
-      </video>
-      <canvas id="canvas"></canvas>
-    </div>
-
-    <div class="gesture-counter card">
-      <h2>Gesture Counter</h2>
-      <div class="counter-grid">
-        <div class="counter-item">
-          <span>Move Forward</span>
-          <strong id="forwardCount">0</strong>
-        </div>
-        <div class="counter-item">
-          <span>Move Back</span>
-          <strong id="backwardCount">0</strong>
-        </div>
-        <div class="counter-item">
-          <span>Start</span>
-          <strong id="startCount">0</strong>
-        </div>
-        <div class="counter-item">
-          <span>Stop</span>
-          <strong id="stopCount">0</strong>
+      <div class="gesture-counter card">
+        <h2>Gesture Counter</h2>
+        <div class="counter-grid">
+          <div class="counter-item">
+            <span>Move Forward</span>
+            <strong id="forwardCount">0</strong>
+          </div>
+          <div class="counter-item">
+            <span>Move Back</span>
+            <strong id="backwardCount">0</strong>
+          </div>
+          <div class="counter-item">
+            <span>Start</span>
+            <strong id="startCount">0</strong>
+          </div>
+          <div class="counter-item">
+            <span>Stop</span>
+            <strong id="stopCount">0</strong>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="info-window">
-    <div class="fps">
-      FPS:
-      <span id="fps">0</span>
+    <div class="info-window">
+      <div class="fps">
+        FPS:
+        <span id="fps">0</span>
+      </div>
+      <div class="card">
+        <h2>Left Hand</h2>
+        <pre id="leftHandData"></pre>
+      </div>
+      <div class="card">
+        <h2>Right Hand</h2>
+        <pre id="rightHandData"></pre>
+      </div>
+      <div class="card body-card">
+        <h2>Body Tracking</h2>
+        <pre id="poseData"></pre>
+      </div>
+      <div class="card log-card">
+        <h2>Logs</h2>
+        <pre class="log-text" id="logs"></pre>
+      </div>
     </div>
-    <div class="card">
-      <h2>Left Hand</h2>
-      <pre id="leftHandData"></pre>
-    </div>
-    <div class="card">
-      <h2>Right Hand</h2>
-      <pre id="rightHandData"></pre>
-    </div>
-    <div class="card body-card">
-      <h2>Body Tracking</h2>
-      <pre id="poseData"></pre>
-    </div>
-    <div class="card log-card">
-      <h2>Logs</h2>
-      <pre class="log-text" id="logs"></pre>
-    </div>
-  </div>
-  <script type="module" src="../src/main.js">
-  </script>
-</body>
-
+    <script type="module" src="../src/main.js"></script>
+  </body>
 </html>

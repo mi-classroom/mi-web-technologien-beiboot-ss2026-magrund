@@ -1,18 +1,15 @@
 import {
   distance,
   isFingerExtended,
-  segmentsIntersect
+  segmentsIntersect,
 } from "../gestureCalculator.js";
 
-export function detectCrossedIndexGesture(
-  leftLandmarks,
-  rightLandmarks
-) {
+export function detectCrossedIndexGesture(leftLandmarks, rightLandmarks) {
   if (!leftLandmarks || !rightLandmarks) {
     return {
       detected: false,
       gesture: "CrossedIndex",
-      data: {}
+      data: {},
     };
   }
 
@@ -22,24 +19,17 @@ export function detectCrossedIndexGesture(
   const rightIndexMcp = rightLandmarks[5];
   const rightIndexTip = rightLandmarks[8];
 
-  if (
-    !leftIndexMcp ||
-    !leftIndexTip ||
-    !rightIndexMcp ||
-    !rightIndexTip
-  ) {
+  if (!leftIndexMcp || !leftIndexTip || !rightIndexMcp || !rightIndexTip) {
     return {
       detected: false,
       gesture: "CrossedIndex",
-      data: {}
+      data: {},
     };
   }
 
-  const leftIndexExtended =
-    isFingerExtended(leftLandmarks, 8, 6);
+  const leftIndexExtended = isFingerExtended(leftLandmarks, 8, 6);
 
-  const rightIndexExtended =
-    isFingerExtended(rightLandmarks, 8, 6);
+  const rightIndexExtended = isFingerExtended(rightLandmarks, 8, 6);
 
   const otherLeftClosed =
     !isFingerExtended(leftLandmarks, 12, 10) &&
@@ -51,20 +41,20 @@ export function detectCrossedIndexGesture(
     !isFingerExtended(rightLandmarks, 16, 14) &&
     !isFingerExtended(rightLandmarks, 20, 18);
 
-  const fingersCrossed =
-    segmentsIntersect(
-      leftIndexMcp,
-      leftIndexTip,
-      rightIndexMcp,
-      rightIndexTip
-    );
+  const fingersCrossed = segmentsIntersect(
+    leftIndexMcp,
+    leftIndexTip,
+    rightIndexMcp,
+    rightIndexTip,
+  );
 
   const tipsClose =
     distance(leftIndexTip, rightIndexTip) <=
     Math.max(
       distance(leftIndexMcp, leftIndexTip),
-      distance(rightIndexMcp, rightIndexTip)
-    ) * 0.9;
+      distance(rightIndexMcp, rightIndexTip),
+    ) *
+      0.9;
 
   const detected =
     leftIndexExtended &&
@@ -77,6 +67,6 @@ export function detectCrossedIndexGesture(
   return {
     detected,
     gesture: "CrossedIndex",
-    data: {}
+    data: {},
   };
 }

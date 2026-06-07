@@ -1,24 +1,14 @@
-import { detectPistolGesture }
-  from "./gestures/pistolGesture.js";
+import { detectPistolGesture } from "./gestures/pistolGesture.js";
 
-import { detectThumbsUpGesture }
-  from "./gestures/thumbsUpGesture.js";
+import { detectThumbsUpGesture } from "./gestures/thumbsUpGesture.js";
 
-import { detectCrossedIndexGesture }
-  from "./gestures/crossIndexFingerGesture.js";
+import { detectCrossedIndexGesture } from "./gestures/crossIndexFingerGesture.js";
 
-export function detectGestures(
-  leftHandLandmarks,
-  rightHandLandmarks
-) {
+export function detectGestures(leftHandLandmarks, rightHandLandmarks) {
   const gestures = [];
 
   if (leftHandLandmarks) {
-    const result =
-      detectPistolGesture(
-        leftHandLandmarks,
-        "Left"
-      );
+    const result = detectPistolGesture(leftHandLandmarks, "Left");
 
     if (result.detected) {
       gestures.push(result);
@@ -26,47 +16,30 @@ export function detectGestures(
   }
 
   if (rightHandLandmarks) {
-    const result =
-      detectPistolGesture(
-        rightHandLandmarks,
-        "Right"
-      );
+    const result = detectPistolGesture(rightHandLandmarks, "Right");
 
     if (result.detected) {
       gestures.push(result);
     }
   }
 
-  if (
-    leftHandLandmarks &&
-    rightHandLandmarks
-  ) {
-    const leftThumbsUp =
-      detectThumbsUpGesture(
-        leftHandLandmarks
-      );
+  if (leftHandLandmarks && rightHandLandmarks) {
+    const leftThumbsUp = detectThumbsUpGesture(leftHandLandmarks);
 
-    const rightThumbsUp =
-      detectThumbsUpGesture(
-        rightHandLandmarks
-      );
+    const rightThumbsUp = detectThumbsUpGesture(rightHandLandmarks);
 
-    if (
-      leftThumbsUp.detected &&
-      rightThumbsUp.detected
-    ) {
+    if (leftThumbsUp.detected && rightThumbsUp.detected) {
       gestures.push({
         detected: true,
         gesture: "ThumbsUp",
-        data: {}
+        data: {},
       });
     }
 
-    const crossedIndex =
-      detectCrossedIndexGesture(
-        leftHandLandmarks,
-        rightHandLandmarks
-      );
+    const crossedIndex = detectCrossedIndexGesture(
+      leftHandLandmarks,
+      rightHandLandmarks,
+    );
 
     if (crossedIndex.detected) {
       gestures.push(crossedIndex);
