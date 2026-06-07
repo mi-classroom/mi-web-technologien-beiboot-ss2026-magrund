@@ -28,16 +28,10 @@ export function detectGestures(leftHandLandmarks, rightHandLandmarks) {
   }
 
   if (leftHandLandmarks && rightHandLandmarks) {
-    const leftThumbsUp = detectThumbsUpGesture(leftHandLandmarks);
+    const thumbsUp = detectThumbsUpGesture(leftHandLandmarks, rightHandLandmarks);
 
-    const rightThumbsUp = detectThumbsUpGesture(rightHandLandmarks);
-
-    if (leftThumbsUp.detected && rightThumbsUp.detected) {
-      gestures.push({
-        detected: true,
-        gesture: "ThumbsUp",
-        data: {},
-      });
+    if (thumbsUp.detected) {
+      gestures.push(thumbsUp);
     }
 
     const crossedIndex = detectCrossedIndexGesture(
@@ -49,28 +43,19 @@ export function detectGestures(leftHandLandmarks, rightHandLandmarks) {
       gestures.push(crossedIndex);
     }
 
-    const leftFingersDown = detectFingersDownGesture(leftHandLandmarks);
+    const fingersDown = detectFingersDownGesture(
+      leftHandLandmarks,
+      rightHandLandmarks,
+    );
 
-    const rightFingerDown = detectFingersDownGesture(rightHandLandmarks);
-
-    if (leftFingersDown.detected && rightFingerDown.detected) {
-      gestures.push({
-        detected: true,
-        gesture: "FingersDown",
-        data: {},
-      });
+    if (fingersDown.detected) {
+      gestures.push(fingersDown);
     }
 
-    const leftFingersUp = detectFingersUpGesture(leftHandLandmarks);
+    const fingersUp = detectFingersUpGesture(leftHandLandmarks, rightHandLandmarks);
 
-    const rightFingersUp = detectFingersUpGesture(rightHandLandmarks);
-
-    if (leftFingersUp.detected && rightFingersUp.detected) {
-      gestures.push({
-        detected: true,
-        gesture: "FingersUp",
-        data: {},
-      });
+    if (fingersUp.detected) {
+      gestures.push(fingersUp);
     }
   }
 

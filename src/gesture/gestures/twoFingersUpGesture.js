@@ -7,7 +7,7 @@ function isFingerPointingUp(landmarks, tipIndex, pipIndex) {
   return tip.y < pip.y;
 }
 
-export function detectFingersUpGesture(landmarks) {
+function detectSingleFingersUpGesture(landmarks) {
   const indexExtended = isFingerExtended(landmarks, 8, 6);
   const middleExtended = isFingerExtended(landmarks, 12, 10);
 
@@ -27,6 +27,25 @@ export function detectFingersUpGesture(landmarks) {
 
   return {
     detected,
+    gesture: "FingersUp",
+    data: {},
+  };
+}
+
+export function detectFingersUpGesture(leftLandmarks, rightLandmarks) {
+  if (!leftLandmarks || !rightLandmarks) {
+    return {
+      detected: false,
+      gesture: "FingersUp",
+      data: {},
+    };
+  }
+
+  const leftFingersUp = detectSingleFingersUpGesture(leftLandmarks);
+  const rightFingersUp = detectSingleFingersUpGesture(rightLandmarks);
+
+  return {
+    detected: leftFingersUp.detected && rightFingersUp.detected,
     gesture: "FingersUp",
     data: {},
   };

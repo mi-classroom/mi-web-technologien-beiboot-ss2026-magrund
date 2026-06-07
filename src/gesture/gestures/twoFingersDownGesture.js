@@ -7,7 +7,7 @@ function isFingerPointingDown(landmarks, tipIndex, pipIndex) {
   return tip.y > pip.y;
 }
 
-export function detectFingersDownGesture(landmarks) {
+function detectSingleFingersDownGesture(landmarks) {
   const indexExtended = isFingerExtended(landmarks, 8, 6);
   const middleExtended = isFingerExtended(landmarks, 12, 10);
 
@@ -27,6 +27,25 @@ export function detectFingersDownGesture(landmarks) {
 
   return {
     detected,
+    gesture: "FingersDown",
+    data: {},
+  };
+}
+
+export function detectFingersDownGesture(leftLandmarks, rightLandmarks) {
+  if (!leftLandmarks || !rightLandmarks) {
+    return {
+      detected: false,
+      gesture: "FingersDown",
+      data: {},
+    };
+  }
+
+  const leftFingersDown = detectSingleFingersDownGesture(leftLandmarks);
+  const rightFingersDown = detectSingleFingersDownGesture(rightLandmarks);
+
+  return {
+    detected: leftFingersDown.detected && rightFingersDown.detected,
     gesture: "FingersDown",
     data: {},
   };

@@ -1,6 +1,6 @@
 import { isFingerExtended, isThumbUp } from "../gestureCalculator.js";
 
-export function detectThumbsUpGesture(landmarks) {
+function detectSingleThumbsUpGesture(landmarks) {
   const thumbUp = isThumbUp(landmarks);
 
   const thumbTip = landmarks[4];
@@ -18,6 +18,25 @@ export function detectThumbsUpGesture(landmarks) {
 
   return {
     detected,
+    gesture: "ThumbsUp",
+    data: {},
+  };
+}
+
+export function detectThumbsUpGesture(leftLandmarks, rightLandmarks) {
+  if (!leftLandmarks || !rightLandmarks) {
+    return {
+      detected: false,
+      gesture: "ThumbsUp",
+      data: {},
+    };
+  }
+
+  const leftThumbsUp = detectSingleThumbsUpGesture(leftLandmarks);
+  const rightThumbsUp = detectSingleThumbsUpGesture(rightLandmarks);
+
+  return {
+    detected: leftThumbsUp.detected && rightThumbsUp.detected,
     gesture: "ThumbsUp",
     data: {},
   };
