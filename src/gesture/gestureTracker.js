@@ -11,6 +11,12 @@ function getGestureSignature(gesture) {
     case "CrossedIndex":
       return gesture.gesture;
 
+    case "FingersUp":
+      return gesture.gesture;
+
+    case "FingersDown":
+      return gesture.gesture;
+
     default:
       return gesture.gesture;
   }

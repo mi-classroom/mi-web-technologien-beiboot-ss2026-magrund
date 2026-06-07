@@ -9,6 +9,12 @@ function formatGestureLog(result) {
     case "CrossedIndex":
       return "Stop";
 
+    case "FingersUp":
+      return "Up";
+
+    case "FingersDown":
+      return "Down";
+
     default:
       return result.gesture;
   }

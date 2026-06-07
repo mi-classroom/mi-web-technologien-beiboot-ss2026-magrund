@@ -4,22 +4,26 @@ import { detectThumbsUpGesture } from "./gestures/thumbsUpGesture.js";
 
 import { detectCrossedIndexGesture } from "./gestures/crossIndexFingerGesture.js";
 
+import { detectFingersUpGesture } from "./gestures/twoFingersUpGesture.js";
+
+import { detectFingersDownGesture } from "./gestures/twoFingersDownGesture.js";
+
 export function detectGestures(leftHandLandmarks, rightHandLandmarks) {
   const gestures = [];
 
   if (leftHandLandmarks) {
-    const result = detectPistolGesture(leftHandLandmarks, "Left");
+    const leftPistol = detectPistolGesture(leftHandLandmarks, "Left");
 
-    if (result.detected) {
-      gestures.push(result);
+    if (leftPistol.detected) {
+      gestures.push(leftPistol);
     }
   }
 
   if (rightHandLandmarks) {
-    const result = detectPistolGesture(rightHandLandmarks, "Right");
+    const rightPistol = detectPistolGesture(rightHandLandmarks, "Right");
 
-    if (result.detected) {
-      gestures.push(result);
+    if (rightPistol.detected) {
+      gestures.push(rightPistol);
     }
   }
 
@@ -43,6 +47,30 @@ export function detectGestures(leftHandLandmarks, rightHandLandmarks) {
 
     if (crossedIndex.detected) {
       gestures.push(crossedIndex);
+    }
+
+    const leftFingersDown = detectFingersDownGesture(leftHandLandmarks);
+
+    const rightFingerDown = detectFingersDownGesture(rightHandLandmarks);
+
+    if (leftFingersDown.detected && rightFingerDown.detected) {
+      gestures.push({
+        detected: true,
+        gesture: "FingersDown",
+        data: {},
+      });
+    }
+
+    const leftFingersUp = detectFingersUpGesture(leftHandLandmarks);
+
+    const rightFingersUp = detectFingersUpGesture(rightHandLandmarks);
+
+    if (leftFingersUp.detected && rightFingersUp.detected) {
+      gestures.push({
+        detected: true,
+        gesture: "FingersUp",
+        data: {},
+      });
     }
   }
 

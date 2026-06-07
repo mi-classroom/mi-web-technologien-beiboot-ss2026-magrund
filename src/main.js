@@ -25,6 +25,8 @@ const forwardCountElement = document.getElementById("forwardCount");
 const backwardCountElement = document.getElementById("backwardCount");
 const startCountElement = document.getElementById("startCount");
 const stopCountElement = document.getElementById("stopCount");
+const upCountElement = document.getElementById("upCount");
+const downCountElement = document.getElementById("downCount");
 
 let lastTime = performance.now();
 
@@ -35,6 +37,8 @@ const gestureCounter = createGestureCounterController({
   backwardCountElement,
   startCountElement,
   stopCountElement,
+  upCountElement,
+  downCountElement,
 });
 
 const gestureTracker = createGestureTracker({ minDurationMs: 1000 });

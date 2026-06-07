@@ -11,6 +11,14 @@ function getGestureAction(result) {
     return "stop";
   }
 
+  if (result.gesture === "FingersUp") {
+    return "up";
+  }
+
+  if (result.gesture === "FingersDown") {
+    return "down";
+  }
+
   return null;
 }
 
@@ -21,6 +29,8 @@ export function createGestureCounterController(elements) {
       backward: 0,
       start: 0,
       stop: 0,
+      up: 0,
+      down: 0,
     },
   };
 
@@ -39,6 +49,14 @@ export function createGestureCounterController(elements) {
 
     if (elements.stopCountElement) {
       elements.stopCountElement.textContent = String(state.counts.stop);
+    }
+
+    if (elements.upCountElement) {
+      elements.upCountElement.textContent = String(state.counts.up);
+    }
+
+    if (elements.downCountElement) {
+      elements.downCountElement.textContent = String(state.counts.down);
     }
   }
 
