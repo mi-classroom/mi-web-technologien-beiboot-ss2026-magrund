@@ -70,3 +70,15 @@ export function detectCrossedIndexGesture(leftLandmarks, rightLandmarks) {
     data: {},
   };
 }
+
+export const crossedIndexGestureDefinition = {
+  name: "CrossedIndex",
+  detect({ leftHandLandmarks, rightHandLandmarks }) {
+    const crossedIndex = detectCrossedIndexGesture(
+      leftHandLandmarks,
+      rightHandLandmarks,
+    );
+
+    return crossedIndex.detected ? [crossedIndex] : [];
+  },
+};

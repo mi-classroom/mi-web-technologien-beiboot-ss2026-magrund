@@ -45,3 +45,28 @@ export function detectPistolGesture(landmarks, hand) {
     },
   };
 }
+
+export const pistolGestureDefinition = {
+  name: "Pistol",
+  detect({ leftHandLandmarks, rightHandLandmarks }) {
+    const gestures = [];
+
+    if (leftHandLandmarks) {
+      const leftPistol = detectPistolGesture(leftHandLandmarks, "Left");
+
+      if (leftPistol.detected) {
+        gestures.push(leftPistol);
+      }
+    }
+
+    if (rightHandLandmarks) {
+      const rightPistol = detectPistolGesture(rightHandLandmarks, "Right");
+
+      if (rightPistol.detected) {
+        gestures.push(rightPistol);
+      }
+    }
+
+    return gestures;
+  },
+};

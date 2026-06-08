@@ -41,3 +41,12 @@ export function detectThumbsUpGesture(leftLandmarks, rightLandmarks) {
     data: {},
   };
 }
+
+export const thumbsUpGestureDefinition = {
+  name: "ThumbsUp",
+  detect({ leftHandLandmarks, rightHandLandmarks }) {
+    const thumbsUp = detectThumbsUpGesture(leftHandLandmarks, rightHandLandmarks);
+
+    return thumbsUp.detected ? [thumbsUp] : [];
+  },
+};

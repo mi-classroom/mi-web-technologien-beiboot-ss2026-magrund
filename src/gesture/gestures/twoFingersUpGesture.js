@@ -50,3 +50,12 @@ export function detectFingersUpGesture(leftLandmarks, rightLandmarks) {
     data: {},
   };
 }
+
+export const fingersUpGestureDefinition = {
+  name: "FingersUp",
+  detect({ leftHandLandmarks, rightHandLandmarks }) {
+    const fingersUp = detectFingersUpGesture(leftHandLandmarks, rightHandLandmarks);
+
+    return fingersUp.detected ? [fingersUp] : [];
+  },
+};
