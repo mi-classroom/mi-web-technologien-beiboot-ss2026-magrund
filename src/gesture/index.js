@@ -11,3 +11,11 @@ export const gestureDefinitions = [
   fingersDownGestureDefinition,
   fingersUpGestureDefinition,
 ];
+
+const gestureDefinitionMap = new Map(
+  gestureDefinitions.map((definition) => [definition.name, definition]),
+);
+
+export function getGestureDefinition(gestureName) {
+  return gestureDefinitionMap.get(gestureName) ?? null;
+}

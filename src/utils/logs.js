@@ -1,23 +1,13 @@
+import { getGestureDefinition } from "../gesture/index.js";
+
 function formatGestureLog(result) {
-  switch (result.gesture) {
-    case "Pistol":
-      return `${result.data.hand}: Pistol (${result.data.direction})`;
+  const definition = getGestureDefinition(result.gesture);
 
-    case "ThumbsUp":
-      return "Start";
-
-    case "CrossedIndex":
-      return "Stop";
-
-    case "FingersUp":
-      return "Up";
-
-    case "FingersDown":
-      return "Down";
-
-    default:
-      return result.gesture;
+  if (!definition || !definition.label) {
+    return result.gesture;
   }
+
+  return definition.label(result);
 }
 
 export function createLogsController(logsElement) {

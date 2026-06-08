@@ -53,6 +53,15 @@ export function detectFingersUpGesture(leftLandmarks, rightLandmarks) {
 
 export const fingersUpGestureDefinition = {
   name: "FingersUp",
+  action() {
+    return "up";
+  },
+  label() {
+    return "Up";
+  },
+  signature(result) {
+    return result.gesture;
+  },
   detect({ leftHandLandmarks, rightHandLandmarks }) {
     const fingersUp = detectFingersUpGesture(leftHandLandmarks, rightHandLandmarks);
 

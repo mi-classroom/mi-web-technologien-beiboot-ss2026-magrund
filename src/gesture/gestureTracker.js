@@ -1,25 +1,13 @@
+import { getGestureDefinition } from "./index.js";
+
 function getGestureSignature(gesture) {
-  switch (gesture.gesture) {
-    case "Pistol":
-      return [gesture.gesture, gesture.data.hand, gesture.data.direction].join(
-        ":",
-      );
+  const definition = getGestureDefinition(gesture.gesture);
 
-    case "ThumbsUp":
-      return gesture.gesture;
-
-    case "CrossedIndex":
-      return gesture.gesture;
-
-    case "FingersUp":
-      return gesture.gesture;
-
-    case "FingersDown":
-      return gesture.gesture;
-
-    default:
-      return gesture.gesture;
+  if (!definition || !definition.signature) {
+    return gesture.gesture;
   }
+
+  return definition.signature(gesture);
 }
 
 export function createGestureTracker(options = {}) {

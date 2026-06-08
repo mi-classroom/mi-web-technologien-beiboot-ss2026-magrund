@@ -44,6 +44,15 @@ export function detectThumbsUpGesture(leftLandmarks, rightLandmarks) {
 
 export const thumbsUpGestureDefinition = {
   name: "ThumbsUp",
+  action() {
+    return "start";
+  },
+  label() {
+    return "Start";
+  },
+  signature(result) {
+    return result.gesture;
+  },
   detect({ leftHandLandmarks, rightHandLandmarks }) {
     const thumbsUp = detectThumbsUpGesture(leftHandLandmarks, rightHandLandmarks);
 

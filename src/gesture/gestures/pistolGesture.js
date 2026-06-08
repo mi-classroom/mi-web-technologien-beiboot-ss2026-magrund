@@ -48,6 +48,15 @@ export function detectPistolGesture(landmarks, hand) {
 
 export const pistolGestureDefinition = {
   name: "Pistol",
+  action(result) {
+    return result.data.direction === "Forward" ? "forward" : "backward";
+  },
+  label(result) {
+    return `${result.data.hand}: Pistol (${result.data.direction})`;
+  },
+  signature(result) {
+    return [result.gesture, result.data.hand, result.data.direction].join(":");
+  },
   detect({ leftHandLandmarks, rightHandLandmarks }) {
     const gestures = [];
 

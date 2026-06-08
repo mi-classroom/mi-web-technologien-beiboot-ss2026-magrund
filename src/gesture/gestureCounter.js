@@ -1,25 +1,13 @@
+import { getGestureDefinition } from "./index.js";
+
 function getGestureAction(result) {
-  if (result.gesture === "Pistol") {
-    return result.data.direction === "Forward" ? "forward" : "backward";
+  const definition = getGestureDefinition(result.gesture);
+
+  if (!definition || !definition.action) {
+    return null;
   }
 
-  if (result.gesture === "ThumbsUp") {
-    return "start";
-  }
-
-  if (result.gesture === "CrossedIndex") {
-    return "stop";
-  }
-
-  if (result.gesture === "FingersUp") {
-    return "up";
-  }
-
-  if (result.gesture === "FingersDown") {
-    return "down";
-  }
-
-  return null;
+  return definition.action(result);
 }
 
 export function createGestureCounterController(elements) {

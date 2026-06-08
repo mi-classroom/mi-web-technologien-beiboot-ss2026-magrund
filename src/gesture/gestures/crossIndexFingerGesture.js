@@ -73,6 +73,15 @@ export function detectCrossedIndexGesture(leftLandmarks, rightLandmarks) {
 
 export const crossedIndexGestureDefinition = {
   name: "CrossedIndex",
+  action() {
+    return "stop";
+  },
+  label() {
+    return "Stop";
+  },
+  signature(result) {
+    return result.gesture;
+  },
   detect({ leftHandLandmarks, rightHandLandmarks }) {
     const crossedIndex = detectCrossedIndexGesture(
       leftHandLandmarks,
