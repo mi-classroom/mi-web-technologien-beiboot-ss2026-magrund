@@ -54,7 +54,10 @@ export const thumbsUpGestureDefinition = {
     return result.gesture;
   },
   detect({ leftHandLandmarks, rightHandLandmarks }) {
-    const thumbsUp = detectThumbsUpGesture(leftHandLandmarks, rightHandLandmarks);
+    const thumbsUp = detectThumbsUpGesture(
+      leftHandLandmarks,
+      rightHandLandmarks,
+    );
 
     return thumbsUp.detected ? [thumbsUp] : [];
   },

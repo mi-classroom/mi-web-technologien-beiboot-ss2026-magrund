@@ -63,7 +63,10 @@ export const fingersUpGestureDefinition = {
     return result.gesture;
   },
   detect({ leftHandLandmarks, rightHandLandmarks }) {
-    const fingersUp = detectFingersUpGesture(leftHandLandmarks, rightHandLandmarks);
+    const fingersUp = detectFingersUpGesture(
+      leftHandLandmarks,
+      rightHandLandmarks,
+    );
 
     return fingersUp.detected ? [fingersUp] : [];
   },
