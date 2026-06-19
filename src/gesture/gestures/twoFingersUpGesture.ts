@@ -1,13 +1,19 @@
+import type { GestureAction, GestureDetectionResult, LandmarkList } from "../../types.js";
+import type { GestureInput } from "../../types.js";
 import { isFingerExtended } from "../gestureCalculator.js";
 
-function isFingerPointingUp(landmarks, tipIndex, pipIndex) {
+function isFingerPointingUp(landmarks: LandmarkList, tipIndex: number, pipIndex: number): boolean {
   const tip = landmarks[tipIndex];
   const pip = landmarks[pipIndex];
+
+  if (!tip || !pip) {
+    return false;
+  }
 
   return tip.y < pip.y;
 }
 
-function detectSingleFingersUpGesture(landmarks) {
+function detectSingleFingersUpGesture(landmarks: LandmarkList): GestureDetectionResult {
   const indexExtended = isFingerExtended(landmarks, 8, 6);
   const middleExtended = isFingerExtended(landmarks, 12, 10);
 
@@ -17,13 +23,7 @@ function detectSingleFingersUpGesture(landmarks) {
   const indexUp = isFingerPointingUp(landmarks, 8, 6);
   const middleUp = isFingerPointingUp(landmarks, 12, 10);
 
-  const detected =
-    indexExtended &&
-    middleExtended &&
-    indexUp &&
-    middleUp &&
-    !ringExtended &&
-    !pinkyExtended;
+  const detected = indexExtended && middleExtended && indexUp && middleUp && !ringExtended && !pinkyExtended;
 
   return {
     detected,
@@ -32,7 +32,7 @@ function detectSingleFingersUpGesture(landmarks) {
   };
 }
 
-export function detectFingersUpGesture(leftLandmarks, rightLandmarks) {
+export function detectFingersUpGesture(leftLandmarks?: LandmarkList | null, rightLandmarks?: LandmarkList | null): GestureDetectionResult {
   if (!leftLandmarks || !rightLandmarks) {
     return {
       detected: false,
@@ -53,20 +53,17 @@ export function detectFingersUpGesture(leftLandmarks, rightLandmarks) {
 
 export const fingersUpGestureDefinition = {
   name: "FingersUp",
-  action() {
+  action(): GestureAction {
     return "up";
   },
   label() {
     return "Up";
   },
-  signature(result) {
+  signature(result: GestureDetectionResult) {
     return result.gesture;
   },
-  detect({ leftHandLandmarks, rightHandLandmarks }) {
-    const fingersUp = detectFingersUpGesture(
-      leftHandLandmarks,
-      rightHandLandmarks,
-    );
+  detect({ leftHandLandmarks, rightHandLandmarks }: GestureInput) {
+    const fingersUp = detectFingersUpGesture(leftHandLandmarks, rightHandLandmarks);
 
     return fingersUp.detected ? [fingersUp] : [];
   },

@@ -1,3 +1,5 @@
+import type { GestureAction, GestureDetectionResult, HandednessLabel, HorizontalDirection, LandmarkList } from "../../types.js";
+import type { GestureInput } from "../../types.js";
 import {
   areFingertipsClose,
   getHorizontalDirection,
@@ -5,17 +7,17 @@ import {
   isThumbUp,
 } from "../gestureCalculator.js";
 
-export function detectPistolGesture(landmarks, hand) {
+interface PistolGestureData {
+  hand?: HandednessLabel;
+  direction?: HorizontalDirection;
+}
+
+export function detectPistolGesture(landmarks: LandmarkList, hand: HandednessLabel): GestureDetectionResult<PistolGestureData> {
   const thumbExtended = isThumbUp(landmarks);
-
   const indexExtended = isFingerExtended(landmarks, 8, 6);
-
   const middleExtended = isFingerExtended(landmarks, 12, 10);
-
   const ringExtended = isFingerExtended(landmarks, 16, 14);
-
   const pinkyExtended = isFingerExtended(landmarks, 20, 18);
-
   const fingertipsClose = areFingertipsClose(landmarks);
 
   const isPistol =
@@ -26,7 +28,7 @@ export function detectPistolGesture(landmarks, hand) {
     !ringExtended &&
     !pinkyExtended;
 
-  const direction = isPistol ? getHorizontalDirection(landmarks) : null;
+  const direction = isPistol ? getHorizontalDirection(landmarks) : "";
 
   if (!isPistol || !direction) {
     return {
@@ -48,17 +50,17 @@ export function detectPistolGesture(landmarks, hand) {
 
 export const pistolGestureDefinition = {
   name: "Pistol",
-  action(result) {
+  action(result: GestureDetectionResult<PistolGestureData>): GestureAction {
     return result.data.direction === "Forward" ? "forward" : "backward";
   },
-  label(result) {
-    return `${result.data.hand}: Pistol (${result.data.direction})`;
+  label(result: GestureDetectionResult<PistolGestureData>) {
+    return `${result.data.hand ?? "Unknown"}: Pistol (${result.data.direction ?? "Unknown"})`;
   },
-  signature(result) {
-    return [result.gesture, result.data.hand, result.data.direction].join(":");
+  signature(result: GestureDetectionResult<PistolGestureData>) {
+    return [result.gesture, result.data.hand ?? "", result.data.direction ?? ""].join(":");
   },
-  detect({ leftHandLandmarks, rightHandLandmarks }) {
-    const gestures = [];
+  detect({ leftHandLandmarks, rightHandLandmarks }: GestureInput) {
+    const gestures: Array<GestureDetectionResult<PistolGestureData>> = [];
 
     if (leftHandLandmarks) {
       const leftPistol = detectPistolGesture(leftHandLandmarks, "Left");

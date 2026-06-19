@@ -1,15 +1,20 @@
-import { HandLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest";
+import { HandLandmarker } from "@mediapipe/tasks-vision";
+import type { Handedness, HandednessLabel, LandmarkList } from "../types.js";
 
-const HAND_COLORS = {
+const HAND_COLORS: Record<HandednessLabel, string> = {
   Left: "#ff0000",
   Right: "#ffea00",
 };
 
-export function createHandRenderer(ctx, canvas) {
-  const px = (lm) => lm.x * canvas.width;
-  const py = (lm) => lm.y * canvas.height;
+function getHandLabel(value: Handedness[number] | undefined): HandednessLabel {
+  return value?.[0]?.categoryName === "Right" ? "Right" : "Left";
+}
 
-  function draw(allLandmarks, handedness) {
+export function createHandRenderer(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  const px = (lm: LandmarkList[number]) => lm.x * canvas.width;
+  const py = (lm: LandmarkList[number]) => lm.y * canvas.height;
+
+  function draw(allLandmarks: ReadonlyArray<LandmarkList>, handedness: Handedness): void {
     ctx.shadowColor = "#000000";
     ctx.shadowBlur = 8;
     ctx.font = "bold 16px Arial";
@@ -17,8 +22,11 @@ export function createHandRenderer(ctx, canvas) {
     for (let hi = 0; hi < allLandmarks.length; hi += 1) {
       const landmarks = allLandmarks[hi];
 
-      const label = handedness[hi]?.[0]?.categoryName ?? "Left";
+      if (!landmarks) {
+        continue;
+      }
 
+      const label = getHandLabel(handedness[hi]);
       const color = HAND_COLORS[label] ?? "#ff0000";
 
       ctx.strokeStyle = color;
@@ -38,6 +46,8 @@ export function createHandRenderer(ctx, canvas) {
 
       for (let i = 0; i < landmarks.length; i += 1) {
         const lm = landmarks[i];
+
+        if (!lm) continue;
 
         const x = px(lm);
         const y = py(lm);

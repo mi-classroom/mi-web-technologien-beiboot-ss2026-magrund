@@ -1,14 +1,12 @@
 node_modules/
 
-# Logs
+dist/
+
+*.tsbuildinfo
+
 npm-debug.log*
 
-# Betriebssystem
 .DS_Store
 Thumbs.db
 
-# VS Code (optional)
 .vscode/
-
-# Coverage/Testreports (falls später genutzt)
-coverage/

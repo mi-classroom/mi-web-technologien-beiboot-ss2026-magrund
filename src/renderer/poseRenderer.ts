@@ -1,16 +1,17 @@
-import { PoseLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest";
+import { PoseLandmarker } from "@mediapipe/tasks-vision";
+import type { LandmarkList } from "../types.js";
 
-function segmentColor(index) {
+function segmentColor(index: number): string {
   if (index <= 10) return "#4fc3f7";
   if (index <= 22) return "#00ff88";
   return "#ffb300";
 }
 
-export function createPoseRenderer(ctx, canvas) {
-  const px = (lm) => lm.x * canvas.width;
-  const py = (lm) => lm.y * canvas.height;
+export function createPoseRenderer(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  const px = (lm: LandmarkList[number]) => lm.x * canvas.width;
+  const py = (lm: LandmarkList[number]) => lm.y * canvas.height;
 
-  function draw(landmarks) {
+  function draw(landmarks: LandmarkList): void {
     ctx.lineWidth = 4;
 
     for (const conn of PoseLandmarker.POSE_CONNECTIONS) {
@@ -18,7 +19,7 @@ export function createPoseRenderer(ctx, canvas) {
       const b = landmarks[conn.end];
 
       if (!a || !b) continue;
-      if (a.visibility < 0.5 || b.visibility < 0.5) continue;
+      if ((a.visibility ?? 0) < 0.5 || (b.visibility ?? 0) < 0.5) continue;
 
       ctx.strokeStyle = segmentColor(conn.start);
 
@@ -33,7 +34,7 @@ export function createPoseRenderer(ctx, canvas) {
     for (let i = 0; i < landmarks.length; i += 1) {
       const lm = landmarks[i];
 
-      if (lm.visibility < 0.5) continue;
+      if (!lm || (lm.visibility ?? 0) < 0.5) continue;
 
       const x = px(lm);
       const y = py(lm);

@@ -1,7 +1,8 @@
-import { getGestureDefinition } from "./index.js";
+import type { GestureAction, GestureCounterController, GestureCounterElements, GestureDetectionResult, GestureLogsOptions } from "../types.js";
+import { defaultGestureRegistry } from "./gestureRegistry.js";
 
-function getGestureAction(result) {
-  const definition = getGestureDefinition(result.gesture);
+function getGestureAction(result: GestureDetectionResult, registry = defaultGestureRegistry): GestureAction | null {
+  const definition = registry.getGestureDefinition(result.gesture);
 
   if (!definition || !definition.action) {
     return null;
@@ -10,7 +11,11 @@ function getGestureAction(result) {
   return definition.action(result);
 }
 
-export function createGestureCounterController(elements) {
+export function createGestureCounterController(
+  elements: GestureCounterElements,
+  options: GestureLogsOptions = {},
+): GestureCounterController {
+  const registry = options.registry ?? defaultGestureRegistry;
   const state = {
     counts: {
       forward: 0,
@@ -22,7 +27,7 @@ export function createGestureCounterController(elements) {
     },
   };
 
-  function renderCounts() {
+  function renderCounts(): void {
     if (elements.forwardCountElement) {
       elements.forwardCountElement.textContent = String(state.counts.forward);
     }
@@ -48,8 +53,8 @@ export function createGestureCounterController(elements) {
     }
   }
 
-  function countGesture(result) {
-    const action = getGestureAction(result);
+  function countGesture(result: GestureDetectionResult): void {
+    const action = getGestureAction(result, registry);
 
     if (!action) {
       return;

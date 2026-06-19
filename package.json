@@ -2,11 +2,22 @@
   "name": "mi-web-technologien-beiboot-ss2026-magrund",
   "version": "1.0.0",
   "description": "Begleitendes Projekt für Web Technologien SS2026",
+  "type": "module",
   "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
   },
   "keywords": [],
   "author": "",
@@ -15,6 +26,10 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.4.1",
     "globals": "^17.6.0",
-    "prettier": "^3.8.3"
+    "prettier": "^3.8.3",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.35"
   }
 }

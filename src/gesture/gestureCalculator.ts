@@ -1,40 +1,58 @@
-export function distance(a, b) {
+import type { HorizontalDirection, Landmark, LandmarkList } from "../types.js";
+
+export function distance(a: Landmark, b: Landmark): number {
   const dx = a.x - b.x;
   const dy = a.y - b.y;
-  const dz = (a.z || 0) - (b.z || 0);
+  const dz = (a.z ?? 0) - (b.z ?? 0);
 
   return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
 
-export function isFingerExtended(landmarks, tipIndex, pipIndex) {
+export function isFingerExtended(landmarks: LandmarkList, tipIndex: number, pipIndex: number): boolean {
   const tip = landmarks[tipIndex];
   const pip = landmarks[pipIndex];
   const wrist = landmarks[0];
 
+  if (!tip || !pip || !wrist) {
+    return false;
+  }
+
   return distance(tip, wrist) > distance(pip, wrist);
 }
 
-export function isThumbUp(landmarks) {
+export function isThumbUp(landmarks: LandmarkList): boolean {
   const thumbTip = landmarks[4];
   const thumbIp = landmarks[3];
   const thumbMcp = landmarks[2];
 
+  if (!thumbTip || !thumbIp || !thumbMcp) {
+    return false;
+  }
+
   return thumbTip.y < thumbIp.y && thumbIp.y < thumbMcp.y;
 }
 
-export function isThumbExtended(landmarks) {
+export function isThumbExtended(landmarks: LandmarkList): boolean {
   const thumbTip = landmarks[4];
   const thumbMcp = landmarks[2];
   const wrist = landmarks[0];
 
+  if (!thumbTip || !thumbMcp || !wrist) {
+    return false;
+  }
+
   return distance(thumbTip, wrist) > distance(thumbMcp, wrist);
 }
 
-export function getHorizontalDirection(landmarks) {
+export function getHorizontalDirection(landmarks: LandmarkList): HorizontalDirection | "" {
   const indexMcp = landmarks[5];
   const middleMcp = landmarks[9];
   const indexTip = landmarks[8];
   const middleTip = landmarks[12];
+
+  if (!indexMcp || !middleMcp || !indexTip || !middleTip) {
+    return "";
+  }
 
   const tipCenterX = (indexTip.x + middleTip.x) / 2;
   const baseCenterX = (indexMcp.x + middleMcp.x) / 2;
@@ -47,16 +65,28 @@ export function getHorizontalDirection(landmarks) {
   return deltaX > 0 ? "Back" : "Forward";
 }
 
-export function areFingertipsClose(landmarks) {
+export function areFingertipsClose(landmarks: LandmarkList): boolean {
   const indexTip = landmarks[8];
   const middleTip = landmarks[12];
-  const handScale = distance(landmarks[0], landmarks[9]);
+  const wrist = landmarks[0];
+  const middleMcp = landmarks[9];
+
+  if (!indexTip || !middleTip || !wrist || !middleMcp) {
+    return false;
+  }
+
+  const handScale = distance(wrist, middleMcp);
 
   return distance(indexTip, middleTip) <= handScale * 0.35;
 }
 
-export function segmentsIntersect(a1, a2, b1, b2) {
-  const cross = (p1, p2, p3) =>
+export interface Point2D {
+  x: number;
+  y: number;
+}
+
+export function segmentsIntersect(a1: Point2D, a2: Point2D, b1: Point2D, b2: Point2D): boolean {
+  const cross = (p1: Point2D, p2: Point2D, p3: Point2D) =>
     (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x);
 
   const d1 = cross(a1, a2, b1);
