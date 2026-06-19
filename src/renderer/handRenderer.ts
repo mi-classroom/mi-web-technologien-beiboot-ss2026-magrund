@@ -10,11 +10,17 @@ function getHandLabel(value: Handedness[number] | undefined): HandednessLabel {
   return value?.[0]?.categoryName === "Right" ? "Right" : "Left";
 }
 
-export function createHandRenderer(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+export function createHandRenderer(
+  ctx: CanvasRenderingContext2D,
+  canvas: HTMLCanvasElement,
+) {
   const px = (lm: LandmarkList[number]) => lm.x * canvas.width;
   const py = (lm: LandmarkList[number]) => lm.y * canvas.height;
 
-  function draw(allLandmarks: ReadonlyArray<LandmarkList>, handedness: Handedness): void {
+  function draw(
+    allLandmarks: ReadonlyArray<LandmarkList>,
+    handedness: Handedness,
+  ): void {
     ctx.shadowColor = "#000000";
     ctx.shadowBlur = 8;
     ctx.font = "bold 16px Arial";

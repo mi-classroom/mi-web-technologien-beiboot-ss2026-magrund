@@ -1,4 +1,10 @@
-import type { GestureAction, GestureDetectionResult, HandednessLabel, HorizontalDirection, LandmarkList } from "../../types.js";
+import type {
+  GestureAction,
+  GestureDetectionResult,
+  HandednessLabel,
+  HorizontalDirection,
+  LandmarkList,
+} from "../../types.js";
 import type { GestureInput } from "../../types.js";
 import {
   areFingertipsClose,
@@ -12,7 +18,10 @@ interface PistolGestureData {
   direction?: HorizontalDirection;
 }
 
-export function detectPistolGesture(landmarks: LandmarkList, hand: HandednessLabel): GestureDetectionResult<PistolGestureData> {
+export function detectPistolGesture(
+  landmarks: LandmarkList,
+  hand: HandednessLabel,
+): GestureDetectionResult<PistolGestureData> {
   const thumbExtended = isThumbUp(landmarks);
   const indexExtended = isFingerExtended(landmarks, 8, 6);
   const middleExtended = isFingerExtended(landmarks, 12, 10);
@@ -57,7 +66,11 @@ export const pistolGestureDefinition = {
     return `${result.data.hand ?? "Unknown"}: Pistol (${result.data.direction ?? "Unknown"})`;
   },
   signature(result: GestureDetectionResult<PistolGestureData>) {
-    return [result.gesture, result.data.hand ?? "", result.data.direction ?? ""].join(":");
+    return [
+      result.gesture,
+      result.data.hand ?? "",
+      result.data.direction ?? "",
+    ].join(":");
   },
   detect({ leftHandLandmarks, rightHandLandmarks }: GestureInput) {
     const gestures: Array<GestureDetectionResult<PistolGestureData>> = [];

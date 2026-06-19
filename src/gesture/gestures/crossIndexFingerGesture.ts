@@ -1,8 +1,19 @@
-import type { GestureAction, GestureDetectionResult, LandmarkList } from "../../types.js";
+import type {
+  GestureAction,
+  GestureDetectionResult,
+  LandmarkList,
+} from "../../types.js";
 import type { GestureInput } from "../../types.js";
-import { distance, isFingerExtended, segmentsIntersect } from "../gestureCalculator.js";
+import {
+  distance,
+  isFingerExtended,
+  segmentsIntersect,
+} from "../gestureCalculator.js";
 
-export function detectCrossedIndexGesture(leftLandmarks?: LandmarkList | null, rightLandmarks?: LandmarkList | null): GestureDetectionResult {
+export function detectCrossedIndexGesture(
+  leftLandmarks?: LandmarkList | null,
+  rightLandmarks?: LandmarkList | null,
+): GestureDetectionResult {
   if (!leftLandmarks || !rightLandmarks) {
     return {
       detected: false,
@@ -38,13 +49,28 @@ export function detectCrossedIndexGesture(leftLandmarks?: LandmarkList | null, r
     !isFingerExtended(rightLandmarks, 16, 14) &&
     !isFingerExtended(rightLandmarks, 20, 18);
 
-  const fingersCrossed = segmentsIntersect(leftIndexMcp, leftIndexTip, rightIndexMcp, rightIndexTip);
+  const fingersCrossed = segmentsIntersect(
+    leftIndexMcp,
+    leftIndexTip,
+    rightIndexMcp,
+    rightIndexTip,
+  );
 
   const tipsClose =
     distance(leftIndexTip, rightIndexTip) <=
-    Math.max(distance(leftIndexMcp, leftIndexTip), distance(rightIndexMcp, rightIndexTip)) * 0.9;
+    Math.max(
+      distance(leftIndexMcp, leftIndexTip),
+      distance(rightIndexMcp, rightIndexTip),
+    ) *
+      0.9;
 
-  const detected = leftIndexExtended && rightIndexExtended && otherLeftClosed && otherRightClosed && fingersCrossed && tipsClose;
+  const detected =
+    leftIndexExtended &&
+    rightIndexExtended &&
+    otherLeftClosed &&
+    otherRightClosed &&
+    fingersCrossed &&
+    tipsClose;
 
   return {
     detected,
@@ -65,7 +91,10 @@ export const crossedIndexGestureDefinition = {
     return result.gesture;
   },
   detect({ leftHandLandmarks, rightHandLandmarks }: GestureInput) {
-    const crossedIndex = detectCrossedIndexGesture(leftHandLandmarks, rightHandLandmarks);
+    const crossedIndex = detectCrossedIndexGesture(
+      leftHandLandmarks,
+      rightHandLandmarks,
+    );
 
     return crossedIndex.detected ? [crossedIndex] : [];
   },

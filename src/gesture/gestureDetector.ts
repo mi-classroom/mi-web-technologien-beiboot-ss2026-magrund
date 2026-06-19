@@ -1,4 +1,8 @@
-import type { GestureDetectionResult, GestureInput, GestureRegistry } from "../types.js";
+import type {
+  GestureDetectionResult,
+  GestureInput,
+  GestureRegistry,
+} from "../types.js";
 import { defaultGestureRegistry } from "./gestureRegistry.js";
 
 export function detectGestures(

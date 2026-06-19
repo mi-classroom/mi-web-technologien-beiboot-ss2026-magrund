@@ -8,7 +8,10 @@ function visibilityIcon(visibility?: number): string {
   return "🔴";
 }
 
-function formatLandmark(name: string, landmark: LandmarkList[number] | undefined): string {
+function formatLandmark(
+  name: string,
+  landmark: LandmarkList[number] | undefined,
+): string {
   const x = landmark?.x.toFixed(2) ?? "n/a";
   const y = landmark?.y.toFixed(2) ?? "n/a";
   const visibility = landmark?.visibility?.toFixed(2) ?? "n/a";

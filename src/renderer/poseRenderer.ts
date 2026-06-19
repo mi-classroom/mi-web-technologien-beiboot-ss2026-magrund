@@ -7,7 +7,10 @@ function segmentColor(index: number): string {
   return "#ffb300";
 }
 
-export function createPoseRenderer(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+export function createPoseRenderer(
+  ctx: CanvasRenderingContext2D,
+  canvas: HTMLCanvasElement,
+) {
   const px = (lm: LandmarkList[number]) => lm.x * canvas.width;
   const py = (lm: LandmarkList[number]) => lm.y * canvas.height;
 

@@ -1,7 +1,10 @@
 import type { GestureDetectionResult, GestureLogsOptions } from "../types.js";
 import { defaultGestureRegistry } from "../gesture/gestureRegistry.js";
 
-function formatGestureLog(result: GestureDetectionResult, registry = defaultGestureRegistry): string {
+function formatGestureLog(
+  result: GestureDetectionResult,
+  registry = defaultGestureRegistry,
+): string {
   const definition = registry.getGestureDefinition(result.gesture);
 
   if (!definition || !definition.label) {
@@ -11,7 +14,10 @@ function formatGestureLog(result: GestureDetectionResult, registry = defaultGest
   return definition.label(result);
 }
 
-export function createLogsController(logsElement: HTMLElement | null, options: GestureLogsOptions = {}) {
+export function createLogsController(
+  logsElement: HTMLElement | null,
+  options: GestureLogsOptions = {},
+) {
   const registry = options.registry ?? defaultGestureRegistry;
   const logs: string[] = [];
 

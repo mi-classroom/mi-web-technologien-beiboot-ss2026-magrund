@@ -8,7 +8,11 @@ export function distance(a: Landmark, b: Landmark): number {
   return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
 
-export function isFingerExtended(landmarks: LandmarkList, tipIndex: number, pipIndex: number): boolean {
+export function isFingerExtended(
+  landmarks: LandmarkList,
+  tipIndex: number,
+  pipIndex: number,
+): boolean {
   const tip = landmarks[tipIndex];
   const pip = landmarks[pipIndex];
   const wrist = landmarks[0];
@@ -44,7 +48,9 @@ export function isThumbExtended(landmarks: LandmarkList): boolean {
   return distance(thumbTip, wrist) > distance(thumbMcp, wrist);
 }
 
-export function getHorizontalDirection(landmarks: LandmarkList): HorizontalDirection | "" {
+export function getHorizontalDirection(
+  landmarks: LandmarkList,
+): HorizontalDirection | "" {
   const indexMcp = landmarks[5];
   const middleMcp = landmarks[9];
   const indexTip = landmarks[8];
@@ -85,7 +91,12 @@ export interface Point2D {
   y: number;
 }
 
-export function segmentsIntersect(a1: Point2D, a2: Point2D, b1: Point2D, b2: Point2D): boolean {
+export function segmentsIntersect(
+  a1: Point2D,
+  a2: Point2D,
+  b1: Point2D,
+  b2: Point2D,
+): boolean {
   const cross = (p1: Point2D, p2: Point2D, p3: Point2D) =>
     (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x);
 

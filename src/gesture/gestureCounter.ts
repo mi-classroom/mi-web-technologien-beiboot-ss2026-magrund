@@ -1,7 +1,16 @@
-import type { GestureAction, GestureCounterController, GestureCounterElements, GestureDetectionResult, GestureLogsOptions } from "../types.js";
+import type {
+  GestureAction,
+  GestureCounterController,
+  GestureCounterElements,
+  GestureDetectionResult,
+  GestureLogsOptions,
+} from "../types.js";
 import { defaultGestureRegistry } from "./gestureRegistry.js";
 
-function getGestureAction(result: GestureDetectionResult, registry = defaultGestureRegistry): GestureAction | null {
+function getGestureAction(
+  result: GestureDetectionResult,
+  registry = defaultGestureRegistry,
+): GestureAction | null {
   const definition = registry.getGestureDefinition(result.gesture);
 
   if (!definition || !definition.action) {

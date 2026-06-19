@@ -1,4 +1,8 @@
-import { FilesetResolver, HandLandmarker, PoseLandmarker } from "@mediapipe/tasks-vision";
+import {
+  FilesetResolver,
+  HandLandmarker,
+  PoseLandmarker,
+} from "@mediapipe/tasks-vision";
 import {
   createGestureCounterController,
   createGestureTracker,
@@ -9,7 +13,10 @@ import { createHandRenderer } from "./renderer/handRenderer.js";
 import { formatBodyData, formatHandData } from "./utils/formatters.js";
 import { createLogsController } from "./utils/logs.js";
 
-function assertElement<T extends HTMLElement>(element: T | null, selector: string): T {
+function assertElement<T extends HTMLElement>(
+  element: T | null,
+  selector: string,
+): T {
   if (!element) {
     throw new Error(`Missing required DOM element: ${selector}`);
   }
@@ -17,8 +24,14 @@ function assertElement<T extends HTMLElement>(element: T | null, selector: strin
   return element;
 }
 
-const video = assertElement(document.getElementById("video") as HTMLVideoElement | null, "#video");
-const canvas = assertElement(document.getElementById("canvas") as HTMLCanvasElement | null, "#canvas");
+const video = assertElement(
+  document.getElementById("video") as HTMLVideoElement | null,
+  "#video",
+);
+const canvas = assertElement(
+  document.getElementById("canvas") as HTMLCanvasElement | null,
+  "#canvas",
+);
 const rawContext = canvas.getContext("2d");
 
 if (!rawContext) {
@@ -32,7 +45,10 @@ const leftHandData = document.getElementById("leftHandData");
 const rightHandData = document.getElementById("rightHandData");
 
 const logsElement = document.getElementById("logs");
-const fpsElement = assertElement(document.getElementById("fps") as HTMLElement | null, "#fps");
+const fpsElement = assertElement(
+  document.getElementById("fps") as HTMLElement | null,
+  "#fps",
+);
 const forwardCountElement = document.getElementById("forwardCount");
 const backwardCountElement = document.getElementById("backwardCount");
 const startCountElement = document.getElementById("startCount");
@@ -70,7 +86,9 @@ async function setupCamera(): Promise<void> {
 }
 
 async function initModels() {
-  const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm");
+  const vision = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm",
+  );
 
   const [poseLandmarker, handLandmarker] = await Promise.all([
     PoseLandmarker.createFromOptions(vision, {
@@ -168,7 +186,10 @@ async function startDemo(): Promise<void> {
       }
     }
 
-    const gestures = detectGestures(firstLeftHandLandmarks, firstRightHandLandmarks);
+    const gestures = detectGestures(
+      firstLeftHandLandmarks,
+      firstRightHandLandmarks,
+    );
     const stableGestures = gestureTracker.update(gestures, startTimeMs);
 
     for (const gesture of stableGestures) {

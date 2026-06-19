@@ -11,14 +11,20 @@ function validateGestureDefinition(definition: GestureDefinition<any>): void {
   }
 
   if (typeof definition.detect !== "function") {
-    throw new TypeError(`Gesture definition "${definition.name}" must provide a detect function.`);
+    throw new TypeError(
+      `Gesture definition "${definition.name}" must provide a detect function.`,
+    );
   }
 }
 
-export function createGestureRegistry(initialDefinitions: GestureDefinition<any>[] = []): GestureRegistry {
+export function createGestureRegistry(
+  initialDefinitions: GestureDefinition<any>[] = [],
+): GestureRegistry {
   const gestureDefinitions = new Map<string, GestureDefinition<any>>();
 
-  function registerGestureDefinition<TData extends object>(definition: GestureDefinition<TData>): GestureDefinition<TData> {
+  function registerGestureDefinition<TData extends object>(
+    definition: GestureDefinition<TData>,
+  ): GestureDefinition<TData> {
     validateGestureDefinition(definition);
 
     gestureDefinitions.set(definition.name, definition);
@@ -41,13 +47,19 @@ export function createGestureRegistry(initialDefinitions: GestureDefinition<any>
   };
 }
 
-export const defaultGestureRegistry = createGestureRegistry(builtinGestureDefinitions);
+export const defaultGestureRegistry = createGestureRegistry(
+  builtinGestureDefinitions,
+);
 
-export function registerGestureDefinition<TData extends object>(definition: GestureDefinition<TData>): GestureDefinition<TData> {
+export function registerGestureDefinition<TData extends object>(
+  definition: GestureDefinition<TData>,
+): GestureDefinition<TData> {
   return defaultGestureRegistry.registerGestureDefinition(definition);
 }
 
-export function getGestureDefinition(gestureName: string): GestureDefinition | null {
+export function getGestureDefinition(
+  gestureName: string,
+): GestureDefinition | null {
   return defaultGestureRegistry.getGestureDefinition(gestureName);
 }
 

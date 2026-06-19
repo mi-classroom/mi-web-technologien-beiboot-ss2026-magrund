@@ -1,7 +1,13 @@
-import type { GestureDetectionResult, GestureTrackerOptions } from "../types.js";
+import type {
+  GestureDetectionResult,
+  GestureTrackerOptions,
+} from "../types.js";
 import { defaultGestureRegistry } from "./gestureRegistry.js";
 
-function getGestureSignature(result: GestureDetectionResult, registry = defaultGestureRegistry): string {
+function getGestureSignature(
+  result: GestureDetectionResult,
+  registry = defaultGestureRegistry,
+): string {
   const definition = registry.getGestureDefinition(result.gesture);
 
   if (!definition || !definition.signature) {
@@ -17,7 +23,10 @@ export function createGestureTracker(options: GestureTrackerOptions = {}) {
 
   const state = new Map<string, { since: number; emitted: boolean }>();
 
-  function update(gestures: GestureDetectionResult[], now: number): GestureDetectionResult[] {
+  function update(
+    gestures: GestureDetectionResult[],
+    now: number,
+  ): GestureDetectionResult[] {
     const stableGestures: GestureDetectionResult[] = [];
     const activeSignatures = new Set<string>();
 

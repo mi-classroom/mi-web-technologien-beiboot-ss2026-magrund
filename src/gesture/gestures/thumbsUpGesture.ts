@@ -1,9 +1,15 @@
-import type { GestureAction, GestureDetectionResult, LandmarkList } from "../../types.js";
+import type {
+  GestureAction,
+  GestureDetectionResult,
+  LandmarkList,
+} from "../../types.js";
 import type { GestureInput } from "../../types.js";
 import { distance } from "../gestureCalculator.js";
 import { isFingerExtended, isThumbUp } from "../gestureCalculator.js";
 
-function detectSingleThumbsUpGesture(landmarks: LandmarkList): GestureDetectionResult {
+function detectSingleThumbsUpGesture(
+  landmarks: LandmarkList,
+): GestureDetectionResult {
   const thumbUp = isThumbUp(landmarks);
 
   const thumbTip = landmarks[4];
@@ -14,7 +20,15 @@ function detectSingleThumbsUpGesture(landmarks: LandmarkList): GestureDetectionR
   const pinkyTip = landmarks[20];
   const wrist = landmarks[0];
 
-  if (!thumbTip || !thumbMcp || !indexTip || !middleTip || !ringTip || !pinkyTip || !wrist) {
+  if (
+    !thumbTip ||
+    !thumbMcp ||
+    !indexTip ||
+    !middleTip ||
+    !ringTip ||
+    !pinkyTip ||
+    !wrist
+  ) {
     return {
       detected: false,
       gesture: "ThumbsUp",
@@ -25,7 +39,8 @@ function detectSingleThumbsUpGesture(landmarks: LandmarkList): GestureDetectionR
   const thumbClearlyExtended = thumbTip.y < thumbMcp.y - 0.03;
   const handScale = distance(wrist, thumbMcp);
   const thumbAwayFromOtherFingers =
-    thumbTip.y < Math.min(indexTip.y, middleTip.y, ringTip.y, pinkyTip.y) - 0.1 &&
+    thumbTip.y <
+      Math.min(indexTip.y, middleTip.y, ringTip.y, pinkyTip.y) - 0.1 &&
     distance(thumbTip, indexTip) > handScale * 0.35 &&
     distance(thumbTip, middleTip) > handScale * 0.35;
 
@@ -35,7 +50,11 @@ function detectSingleThumbsUpGesture(landmarks: LandmarkList): GestureDetectionR
     !isFingerExtended(landmarks, 16, 14) &&
     !isFingerExtended(landmarks, 20, 18);
 
-  const detected = thumbUp && thumbClearlyExtended && thumbAwayFromOtherFingers && fingersClosed;
+  const detected =
+    thumbUp &&
+    thumbClearlyExtended &&
+    thumbAwayFromOtherFingers &&
+    fingersClosed;
 
   return {
     detected,
@@ -44,7 +63,10 @@ function detectSingleThumbsUpGesture(landmarks: LandmarkList): GestureDetectionR
   };
 }
 
-export function detectThumbsUpGesture(leftLandmarks?: LandmarkList | null, rightLandmarks?: LandmarkList | null): GestureDetectionResult {
+export function detectThumbsUpGesture(
+  leftLandmarks?: LandmarkList | null,
+  rightLandmarks?: LandmarkList | null,
+): GestureDetectionResult {
   if (!leftLandmarks || !rightLandmarks) {
     return {
       detected: false,
@@ -75,7 +97,10 @@ export const thumbsUpGestureDefinition = {
     return result.gesture;
   },
   detect({ leftHandLandmarks, rightHandLandmarks }: GestureInput) {
-    const thumbsUp = detectThumbsUpGesture(leftHandLandmarks, rightHandLandmarks);
+    const thumbsUp = detectThumbsUpGesture(
+      leftHandLandmarks,
+      rightHandLandmarks,
+    );
 
     return thumbsUp.detected ? [thumbsUp] : [];
   },
