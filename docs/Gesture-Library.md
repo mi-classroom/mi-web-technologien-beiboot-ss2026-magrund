@@ -6,12 +6,12 @@ The gesture detection logic is encapsulated as a small TypeScript library in `sr
 
 The following functions are intended for external use:
 
-* `createGestureRegistry(initialDefinitions)` creates a gesture registry with the provided gesture definitions.
-* `registerGestureDefinition(definition)` registers a new gesture in the default registry.
-* `builtinGestureDefinitions` exposes the built-in gestures so a consumer can seed a custom registry with the default mapping.
-* `detectGestures(leftHandLandmarks, rightHandLandmarks, { registry })` returns all currently detected gestures.
-* `createGestureTracker({ minDurationMs, registry })` stabilizes gesture detections over time.
-* `createGestureCounterController(elements, { registry })` maps detected gestures to counters and updates the corresponding DOM elements.
+- `createGestureRegistry(initialDefinitions)` creates a gesture registry with the provided gesture definitions.
+- `registerGestureDefinition(definition)` registers a new gesture in the default registry.
+- `builtinGestureDefinitions` exposes the built-in gestures so a consumer can seed a custom registry with the default mapping.
+- `detectGestures(leftHandLandmarks, rightHandLandmarks, { registry })` returns all currently detected gestures.
+- `createGestureTracker({ minDurationMs, registry })` stabilizes gesture detections over time.
+- `createGestureCounterController(elements, { registry })` maps detected gestures to counters and updates the corresponding DOM elements.
 
 ## Public vs Private
 
