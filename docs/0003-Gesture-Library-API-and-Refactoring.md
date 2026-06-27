@@ -34,6 +34,7 @@ The library now exposes a small public surface through [src/index.ts](../src/ind
 - `registerGestureDefinition(definition)`
 - `getGestureDefinition(name)`
 - `getGestureDefinitions()`
+- `builtinGestureDefinitions`
 - `detectGestures(leftHandLandmarks, rightHandLandmarks, { registry })`
 - `createGestureTracker({ minDurationMs, registry })`
 - `createGestureCounterController(elements, { registry })`
@@ -48,6 +49,7 @@ The public API is intentionally small and stable:
 - The detector turns landmark input into gesture results.
 - The tracker stabilizes repeated detections over time.
 - The counter translates gesture results into application actions.
+- The built-in gesture definitions provide a default mapping that can be reused or copied into a custom registry.
 
 The API accepts plain landmark arrays and optional registry instances. This keeps the library framework-agnostic and easy to reuse in other browser apps.
 
@@ -58,7 +60,7 @@ The following parts are treated as internal implementation details:
 - Gesture-specific helper functions like distance checks and angle heuristics.
 - DOM rendering helpers for pose and hand overlays.
 - The demo bootstrap in [src/main.ts](../src/main.ts).
-- Built-in gesture definitions as concrete implementation objects.
+- The concrete gesture detection logic behind the built-in definitions.
 
 These modules can change without forcing changes for consumers, as long as the public functions above keep their contract.
 
@@ -70,5 +72,5 @@ These modules can change without forcing changes for consumers, as long as the p
 
 ## Links
 
-- [Library usage guide](README.md)
+- [Library usage guide](Gesture-Library.md)
 - [Gesture mapping table](Hand-Gestures.md)
