@@ -100,17 +100,10 @@ export function createGestureController(
       const tracked = tracker.update(detected, now);
 
       for (const gesture of tracked) {
-        if (gesture.gesture !== "Pistol") {
-          continue;
-        }
-
-        // Zusatzdaten der Geste auslesen, hier die Richtung Forward oder Back.
-        const direction = getPistolDirection(gesture.data);
-
-        if (direction === "Forward") {
+        if (gesture.gesture === "PistolForward") {
           onPistolRight();
           onStatus("Pistol Forward detected");
-        } else if (direction === "Back") {
+        } else if (gesture.gesture === "PistolBackward") {
           onPistolLeft();
           onStatus("Pistol Back detected");
         }
@@ -166,15 +159,4 @@ function splitHands(result: HandLandmarkerResult): {
   }
 
   return { leftHand, rightHand };
-}
-
-function getPistolDirection(data: unknown): "Forward" | "Back" | null {
-  if (!data || typeof data !== "object") {
-    return null;
-  }
-
-  // Die Gestenbibliothek hängt die Richtung als Metadatum an die erkannte Geste.
-  const value = (data as { direction?: unknown }).direction;
-
-  return value === "Forward" || value === "Back" ? value : null;
 }
