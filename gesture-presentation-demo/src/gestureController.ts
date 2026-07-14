@@ -26,7 +26,7 @@ export function createGestureController(
   const { videoElement, onPistolLeft, onPistolRight, onStatus } = options;
 
   // Merkt sich erkannte Gesten kurzzeitig, damit nicht jeder einzelne Frame navigiert.
-  const tracker = createGestureTracker({ minDurationMs: 1000 });
+  const tracker = createGestureTracker({ minDurationMs: 500 });
   let running = false;
   let animationFrameId: number | null = null;
   let stream: MediaStream | null = null;
