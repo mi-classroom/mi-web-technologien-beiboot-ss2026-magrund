@@ -1,38 +1,45 @@
 import { useEffect, useRef, useState } from "react";
 import {
   createGestureController,
-  type GestureFrame,
   type GestureController,
+  type GestureFrame,
 } from "./gestureController";
 import { MiniCamera } from "./MiniCamera";
-import { createPresentation, loadSlides, type PresentationState } from "./presentation";
+import {
+  createYouTubePlayer,
+  extractYouTubeVideoId,
+  type YouTubePlayer,
+} from "./youtubePlayer";
 
-const INITIAL_STATUS = "Starte Präsentation ...";
+const DEFAULT_VIDEO_URL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 
 export default function App() {
-  const [slideState, setSlideState] = useState<PresentationState | null>(null);
-  const [status, setStatus] = useState(INITIAL_STATUS);
+  const [videoUrl, setVideoUrl] = useState(DEFAULT_VIDEO_URL);
+  const [status, setStatus] = useState("Starte Kamera ...");
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [cameraFrame, setCameraFrame] = useState<GestureFrame | null>(null);
-  const presentationRef = useRef<ReturnType<typeof createPresentation> | null>(null);
+  const [lastAction, setLastAction] = useState("Noch keine Geste erkannt");
+  const [videoId, setVideoId] = useState(
+    extractYouTubeVideoId(DEFAULT_VIDEO_URL),
+  );
+
   const gestureControllerRef = useRef<GestureController | null>(null);
+  const youtubePlayerRef = useRef<YouTubePlayer | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    async function bootstrap(): Promise<void> {
+    async function bootstrap() {
       try {
-        setStatus("Lade Slides ...");
-        const slides = await loadSlides();
+        const player = await createYouTubePlayer("youtube-player", videoId);
 
         if (cancelled) {
+          player.destroy();
           return;
         }
 
-        presentationRef.current = createPresentation(slides, (nextState) => {
-          setSlideState(nextState);
-        });
+        youtubePlayerRef.current = player;
 
         const videoElement = videoRef.current;
 
@@ -42,26 +49,28 @@ export default function App() {
 
         gestureControllerRef.current = createGestureController({
           videoElement,
+
           onPistolLeft: () => {
-            presentationRef.current?.previous();
+            youtubePlayerRef.current?.seekRelative(-10);
+            setLastAction("← 10 Sekunden zurück");
           },
+
           onPistolRight: () => {
-            presentationRef.current?.next();
+            youtubePlayerRef.current?.seekRelative(10);
+            setLastAction("→ 10 Sekunden vor");
           },
-          onStatus: (message) => {
-            setStatus(message);
-          },
-          onStream: (stream) => {
-            setCameraStream(stream);
-          },
-          onFrame: (frame) => {
-            setCameraFrame(frame);
-          },
+
+          onStatus: setStatus,
+
+          onStream: setCameraStream,
+
+          onFrame: setCameraFrame,
         });
 
         await gestureControllerRef.current.start();
       } catch (error) {
-        console.error("[presentation-demo] startup failed", error);
+        console.error("[youtube-gesture-demo] startup failed", error);
+        setStatus("Fehler beim Starten");
       }
     }
 
@@ -69,76 +78,112 @@ export default function App() {
 
     return () => {
       cancelled = true;
+
       gestureControllerRef.current?.stop();
       gestureControllerRef.current = null;
-      presentationRef.current = null;
-    };
-  }, []);
 
-  const currentSlideIndex = slideState ? slideState.currentIndex + 1 : 0;
-  const totalSlides = slideState?.totalSlides ?? 0;
+      youtubePlayerRef.current?.destroy();
+      youtubePlayerRef.current = null;
+    };
+  }, [videoId]);
+
+  function loadVideo() {
+    const nextVideoId = extractYouTubeVideoId(videoUrl);
+
+    if (!nextVideoId) {
+      setStatus("Keine gültige YouTube-URL");
+      return;
+    }
+
+    setVideoId(nextVideoId);
+    setLastAction("Neues Video geladen");
+  }
+
+  function togglePlayPause() {
+    youtubePlayerRef.current?.togglePlayPause();
+  }
+
+  function seek(seconds: number) {
+    youtubePlayerRef.current?.seekRelative(seconds);
+
+    setLastAction(
+      seconds > 0
+        ? `→ ${seconds} Sekunden vor`
+        : `← ${Math.abs(seconds)} Sekunden zurück`,
+    );
+  }
 
   return (
-    <main className="presentation-shell">
+    <main className="youtube-shell">
       <header className="hero">
         <div>
-          <h1>Präsentation mit Gestensteuerung</h1>
+          <span className="eyebrow">Gesture Control</span>
+          <h1>YouTube mit Gestensteuerung</h1>
         </div>
 
         <div className="status-card" aria-live="polite">
-          <span className="status-label">Status</span>
+          <span className="status-label">System</span>
           <strong>{status}</strong>
         </div>
       </header>
 
-      <section className="slide-frame" aria-label="Aktuelle Folie">
-        {slideState ? (
-          <img
-            src={slideState.currentSlideSrc}
-            alt={`Folie ${currentSlideIndex} von ${totalSlides}`}
-          />
-        ) : (
-          <div className="slide-placeholder">Präsentation wird geladen</div>
-        )}
+      <section className="youtube-section">
+        <div className="youtube-player-wrapper">
+          <div id="youtube-player" />
+        </div>
       </section>
 
-      <section className="controls" aria-label="Foliensteuerung">
-        <div className="slide-counter">
-          {slideState ? `${currentSlideIndex} / ${totalSlides}` : "0 / 0"}
-        </div>
+      <section className="gesture-status">
+        <span className="status-label">Letzte Aktion</span>
+        <strong>{lastAction}</strong>
+      </section>
 
-        <div className="button-row">
-          <button
-            type="button"
-            onClick={() => presentationRef.current?.previous()}
-            disabled={!slideState}
-          >
-            Previous
-          </button>
-          <button
-            className="primary"
-            type="button"
-            onClick={() => presentationRef.current?.next()}
-            disabled={!slideState}
-          >
-            Next
-          </button>
-        </div>
+      <section className="url-controls">
+        <input
+          type="url"
+          value={videoUrl}
+          onChange={(event) => setVideoUrl(event.target.value)}
+          placeholder="YouTube URL"
+          aria-label="YouTube URL"
+        />
+
+        <button className="primary" type="button" onClick={loadVideo}>
+          Video laden
+        </button>
+      </section>
+
+      <section className="controls">
+        <button type="button" onClick={() => seek(-10)}>
+          ← 10s
+        </button>
+
+        <button className="primary" type="button" onClick={togglePlayPause}>
+          Play / Pause
+        </button>
+
+        <button type="button" onClick={() => seek(10)}>
+          10s →
+        </button>
       </section>
 
       <section className="camera-panel" aria-label="Kameravorschau">
         <div className="camera-panel__header">
           <div>
             <span className="status-label">Kamera</span>
-            <strong>Live-Erkennung</strong>
+            <strong>Gestenerkennung</strong>
           </div>
-          <div className="camera-panel__hint">Landmarks werden direkt im Bild markiert</div>
         </div>
 
         <MiniCamera stream={cameraStream} frame={cameraFrame} />
       </section>
 
-      <video ref={videoRef} className="video" autoPlay muted playsInline />
+      <video
+        ref={videoRef}
+        className="gesture-video"
+        autoPlay
+        muted
+        playsInline
+      />
     </main>
   );
 }

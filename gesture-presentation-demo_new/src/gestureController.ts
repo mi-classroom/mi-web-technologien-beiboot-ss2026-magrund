@@ -31,13 +31,6 @@ export interface GestureController {
 export function createGestureController(
   options: GestureControllerOptions,
 ): GestureController {
-  const {
-    videoElement,
-    onPistolLeft,
-    onPistolRight,
-    onStatus,
-  } = options;
-
   const tracker = createGestureTracker();
 
   let running = false;
@@ -50,7 +43,7 @@ export function createGestureController(
     }
 
     running = true;
-    onStatus("Kamera wird angefragt");
+    options.onStatus("Kamera wird angefragt");
 
     stream = await navigator.mediaDevices.getUserMedia({
       video: {
@@ -59,11 +52,11 @@ export function createGestureController(
       },
     });
 
-    videoElement.srcObject = stream;
+    options.videoElement.srcObject = stream;
     options.onStream?.(stream);
 
     await new Promise<void>((resolve) => {
-      videoElement.onloadedmetadata = () => resolve();
+      options.videoElement.onloadedmetadata = () => resolve();
     });
 
     if (!running) {
@@ -71,7 +64,7 @@ export function createGestureController(
       return;
     }
 
-    onStatus("Modell wird geladen");
+    options.onStatus("Modell wird geladen");
 
     const vision = await FilesetResolver.forVisionTasks(
       "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm",
@@ -97,7 +90,7 @@ export function createGestureController(
       return;
     }
 
-    onStatus("Gestensteuerung aktiv");
+    options.onStatus("Gestensteuerung aktiv");
 
     function loop(): void {
       if (!running) {
@@ -105,7 +98,7 @@ export function createGestureController(
       }
 
       const result = handLandmarker.detectForVideo(
-        videoElement,
+        options.videoElement,
         performance.now(),
       );
 
@@ -123,13 +116,13 @@ export function createGestureController(
 
       switch (gesture?.type) {
         case Gestures.pistolForward:
-          onPistolRight();
-          onStatus("Pistol Forward detected");
+          options.onPistolRight();
+          options.onStatus("Pistole → erkannt");
           break;
 
         case Gestures.pistolBackward:
-          onPistolLeft();
-          onStatus("Pistol Back detected");
+          options.onPistolLeft();
+          options.onStatus("Pistole ← erkannt");
           break;
       }
 
@@ -155,8 +148,8 @@ export function createGestureController(
       stream = null;
     }
 
-    videoElement.onloadedmetadata = null;
-    videoElement.srcObject = null;
+    options.videoElement.onloadedmetadata = null;
+    options.videoElement.srcObject = null;
   }
 
   return {
@@ -177,7 +170,9 @@ function splitHands(result: HandLandmarkerResult): {
 
     if (label === "Left") {
       leftHand = result.landmarks[index] ?? null;
-    } else if (label === "Right") {
+    }
+
+    if (label === "Right") {
       rightHand = result.landmarks[index] ?? null;
     }
   }
