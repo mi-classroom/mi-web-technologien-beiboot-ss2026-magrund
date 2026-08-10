@@ -1,0 +1,22 @@
+{
+  "manifest_version": 1,
+  "name": "YouTube Gesture Control",
+  "version": "0.1.0",
+  "description": "Steuere YouTube direkt im aktiven Tab mit Handgesten.",
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["control.html", "control.js", "library/*", "assets/*", "assets/wasm/*"],
+      "matches": ["https://www.youtube.com/*"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+  }
+}

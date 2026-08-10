@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>YouTube Gesture Control</title>
+  <link rel="stylesheet" href="./control.css" />
+</head>
+
+<body>
+  <div id="panel">
+
+    <div id="head">
+      <span>🎥 Gesture Control</span>
+    </div>
+
+    <div id="camera-container">
+      <div id="camera-placeholder">
+        <div class="camera-icon">📷</div>
+        <div>Kamera nicht aktiv</div>
+        <small>Starte die Gestensteuerung</small>
+      </div>
+
+      <video id="camera" autoplay muted playsinline></video>
+    </div>
+
+    <div id="status">⚪ Bereit</div>
+
+    <button id="start">Gesten starten</button>
+    <button id="stop">Gesten stoppen</button>
+
+    <small id="gestures">
+      🔫→ +10s · 🔫← −10s · 👍👍 Play/Pause · ☝️☝️ Lauter · 👇👇 Leiser
+    </small>
+
+  </div>
+
+  <script type="module" src="./control.js"></script>
+</body>
+</html>
