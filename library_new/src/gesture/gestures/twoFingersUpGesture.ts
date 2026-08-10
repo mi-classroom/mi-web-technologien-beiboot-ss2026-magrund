@@ -8,7 +8,7 @@ import { Gestures } from "../GestureType.js";
 
 import {
   isFingerExtended,
-  isFingerPointingUp,
+  isFingerPointingUp
 } from "../../math/handMath.js";
 
 function detect(
