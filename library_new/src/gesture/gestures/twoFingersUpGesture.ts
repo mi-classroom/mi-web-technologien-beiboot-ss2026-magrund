@@ -53,7 +53,12 @@ export const twoFingersUpGesture: GestureDefinition = {
 
   defaultConfiguration: {
     enabled: true,
-    minDurationMs: 300,
+    minDurationMs: 500,
+
+    repeat: {
+      enabled: true,
+      intervalMs: 250,
+    },
   },
 
   detect,

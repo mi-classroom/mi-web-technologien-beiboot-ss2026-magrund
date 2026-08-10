@@ -14,9 +14,16 @@ export interface GestureInput {
   rightHandLandmarks?: LandmarkList | null;
 }
 
+export interface GestureRepeatConfiguration {
+  enabled: boolean;
+  intervalMs: number;
+}
+
 export interface GestureConfiguration {
   enabled: boolean;
   minDurationMs: number;
+
+  repeat?: GestureRepeatConfiguration;
 }
 
 export type GestureType =
@@ -24,4 +31,14 @@ export type GestureType =
 
 export interface GestureDetectionResult {
   type: GestureType;
+}
+
+export type GesturePhase =
+  | "start"
+  | "hold";
+
+export interface GestureEvent {
+  type: GestureType;
+  phase: GesturePhase;
+  durationMs: number;
 }

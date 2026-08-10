@@ -30,7 +30,7 @@
     "width:100%",
     "height:100%",
     "overflow:hidden",
-    "border-radius:12px",
+    "border-radius:12px"
   ].join(";");
 
   const frame = document.createElement("iframe");
@@ -149,25 +149,56 @@
     );
   }
 
+  let seekCount = 0;
+
+  function getSeekTime(duration) {
+    seekCount++;
+
+    if (seekCount <= 3) {
+      return 10;
+    }
+
+    if (duration < 5 * 60) {
+      return 10;
+    } else if (duration < 15 * 60) {
+      return 20;
+    } else if (duration < 30 * 60) {
+      return 30;
+    } else if (duration < 60 * 60) {
+      return 60;
+    } else {
+      return 90;
+    }
+  }
+
   function handleCommand(command) {
     const video = getVideo();
 
     if (!video) return;
 
     switch (command) {
-      case "SEEK_FORWARD":
+
+      case "SEEK_FORWARD": {
+        const seekTime = getSeekTime(video.duration);
+
         video.currentTime = Math.min(
           video.duration || Infinity,
-          video.currentTime + 10
+          video.currentTime + seekTime
         );
-        break;
 
-      case "SEEK_BACKWARD":
+        break;
+      }
+
+      case "SEEK_BACKWARD": {
+        const seekTime = getSeekTime(video.duration);
+
         video.currentTime = Math.max(
           0,
-          video.currentTime - 10
+          video.currentTime - seekTime
         );
+
         break;
+      }
 
       case "PLAY_PAUSE":
         if (video.paused) {

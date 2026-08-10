@@ -97,6 +97,11 @@ export const bothThumbsUpGesture: GestureDefinition = {
   defaultConfiguration: {
     enabled: true,
     minDurationMs: 300,
+
+    repeat: {
+      enabled: false,
+      intervalMs: 0,
+    },
   },
 
   detect,

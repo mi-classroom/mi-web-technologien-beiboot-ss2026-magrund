@@ -1,118 +1,179 @@
 import { builtinGestures } from "../gesture/builtinGestures.js";
 import type { GestureDefinition } from "../gesture/GestureDefinition.js";
+
 import type {
-    GestureConfiguration,
-    GestureDetectionResult,
-    GestureInput,
+  GestureConfiguration,
+  GestureEvent,
+  GestureInput,
 } from "../types.js";
+
 import type { GestureType } from "../gesture/GestureType.js";
 
 interface GestureState {
-    configuration: Partial<GestureConfiguration>;
-    since: number | null;
-    emitted: boolean;
+  configuration: Partial<GestureConfiguration>;
+
+  since: number | null;
+
+  emitted: boolean;
+
+  lastEmission: number | null;
 }
 
 class GestureTracker {
-    private readonly gestureDefinitions =
-        new Map<GestureType, GestureDefinition>();
+  private readonly gestureDefinitions =
+    new Map<GestureType, GestureDefinition>();
 
-    private readonly gestureState =
-        new Map<GestureType, GestureState>();
+  private readonly gestureState =
+    new Map<GestureType, GestureState>();
 
-    constructor(
-        definitions: GestureDefinition[] = builtinGestures,
-    ) {
-        for (const definition of definitions) {
-            this.gestureDefinitions.set(
-                definition.type,
-                definition,
-            );
+  constructor(
+    definitions: GestureDefinition[] = builtinGestures,
+  ) {
+    for (const definition of definitions) {
+      this.gestureDefinitions.set(
+        definition.type,
+        definition,
+      );
 
-            this.gestureState.set(
-                definition.type,
-                {
-                    configuration: {
-                        ...definition.defaultConfiguration,
-                    },
-                    since: null,
-                    emitted: false,
-                },
-            );
-        }
+      this.gestureState.set(
+        definition.type,
+        {
+          configuration: {
+            ...definition.defaultConfiguration,
+          },
+
+          since: null,
+
+          emitted: false,
+
+          lastEmission: null,
+        },
+      );
     }
+  }
 
-    detect(
-        input: GestureInput,
-        timestamp = Date.now(),
-    ): GestureDetectionResult | null {
-        const activeGestures = new Set<GestureType>();
+  detect(
+    input: GestureInput,
+    timestamp = Date.now(),
+  ): GestureEvent | null {
+    const activeGestures = new Set<GestureType>();
 
-        for (const definition of this.gestureDefinitions.values()) {
-            const state = this.gestureState.get(definition.type);
+    for (const definition of this.gestureDefinitions.values()) {
+      const state =
+        this.gestureState.get(definition.type);
 
-            if (!state) {
-                continue;
-            }
+      if (!state) {
+        continue;
+      }
 
-            if (state.configuration.enabled === false) {
-                continue;
-            }
+      if (state.configuration.enabled === false) {
+        continue;
+      }
 
-            const gesture = definition.detect(input);
+      const detected =
+        definition.detect(input);
 
-            if (!gesture) {
-                continue;
-            }
+      if (!detected) {
+        continue;
+      }
 
-            activeGestures.add(definition.type);
+      const gestureType = definition.type;
 
-            if (state.since === null) {
-                state.since = timestamp;
-                state.emitted = false;
-            }
+      activeGestures.add(gestureType);
 
-            const minDurationMs =
-                state.configuration.minDurationMs ?? 0;
+      if (state.since === null) {
+        state.since = timestamp;
+        state.emitted = false;
+        state.lastEmission = null;
+      }
 
-            if (
-                !state.emitted &&
-                timestamp - state.since >= minDurationMs
-            ) {
-                state.emitted = true;
-                console.log(`[GestureTracker] ${definition.type} triggered`);
+      const durationMs =
+        timestamp - state.since;
 
-                return gesture;
-            }
-        }
+      const minDurationMs =
+        state.configuration.minDurationMs ?? 0;
 
-        for (const [gestureType, state] of this.gestureState.entries()) {
-            if (!activeGestures.has(gestureType)) {
-                state.since = null;
-                state.emitted = false;
-            }
-        }
+      if (durationMs < minDurationMs) {
+        continue;
+      }
 
-        return null;
-    }
+      const repeat =
+        state.configuration.repeat;
 
-    configureGesture(
-        gesture: GestureType,
-        configuration: Partial<GestureConfiguration>,
-    ): void {
-        const state = this.gestureState.get(gesture);
+      if (!state.emitted) {
+        state.emitted = true;
+        state.lastEmission = timestamp;
 
-        if (!state) {
-            return;
-        }
+        console.log(
+          `[GestureTracker] ${gestureType} started`,
+        );
 
-        state.configuration = {
-            ...state.configuration,
-            ...configuration,
+        return {
+          type: gestureType,
+          phase: "start",
+          durationMs,
         };
+      }
+
+      if (!repeat?.enabled) {
+        continue;
+      }
+
+      const intervalMs =
+        repeat.intervalMs ?? 300;
+
+      if (
+        state.lastEmission !== null &&
+        timestamp - state.lastEmission < intervalMs
+      ) {
+        continue;
+      }
+
+      state.lastEmission = timestamp;
+
+      console.log(
+        `[GestureTracker] ${gestureType} hold`,
+      );
+
+      return {
+        type: gestureType,
+        phase: "hold",
+        durationMs,
+      };
     }
+
+    for (
+      const [gestureType, state]
+      of this.gestureState.entries()
+    ) {
+      if (!activeGestures.has(gestureType)) {
+        state.since = null;
+        state.emitted = false;
+        state.lastEmission = null;
+      }
+    }
+
+    return null;
+  }
+
+  configureGesture(
+    gesture: GestureType,
+    configuration: Partial<GestureConfiguration>,
+  ): void {
+    const state =
+      this.gestureState.get(gesture);
+
+    if (!state) {
+      return;
+    }
+
+    state.configuration = {
+      ...state.configuration,
+      ...configuration,
+    };
+  }
 }
 
 export function createGestureTracker(): GestureTracker {
-    return new GestureTracker();
+  return new GestureTracker();
 }

@@ -52,6 +52,11 @@ export const pistolForwardGesture: GestureDefinition = {
   defaultConfiguration: {
     enabled: true,
     minDurationMs: 300,
+
+    repeat: {
+      enabled: true,
+      intervalMs: 300,
+    },
   },
 
   detect,

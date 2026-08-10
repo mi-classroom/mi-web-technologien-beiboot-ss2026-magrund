@@ -191,6 +191,13 @@ function loop() {
           );
           break;
 
+        case Gestures.crossIndexFinger:
+          command(
+            "PLAY_PAUSE",
+            "▶/⏸ Play/Pause"
+          );
+          break;
+
         case Gestures.twoFingersUp:
           command(
             "VOLUME_UP",

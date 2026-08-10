@@ -40,12 +40,17 @@ function detect(input: GestureInput): GestureDetectionResult | null {
 }
 
 export const twoFingersDownGesture: GestureDefinition = {
-    type: Gestures.twoFingersDown,
+  type: Gestures.twoFingersDown,
 
-    defaultConfiguration: {
-        enabled: true,
-        minDurationMs: 300,
+  defaultConfiguration: {
+    enabled: true,
+    minDurationMs: 500,
+
+    repeat: {
+      enabled: true,
+      intervalMs: 250,
     },
+  },
 
-    detect,
+  detect,
 };
