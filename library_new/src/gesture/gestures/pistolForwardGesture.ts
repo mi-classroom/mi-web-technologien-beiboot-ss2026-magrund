@@ -31,10 +31,10 @@ function detect(
   const detected =
     isFingerExtended(landmarks, 8, 6) &&
     isThumbExtended(landmarks) &&
-    isFingerExtended(landmarks, 12, 10) &&
+    !isFingerExtended(landmarks, 12, 10) &&
     !isFingerExtended(landmarks, 16, 14) &&
     !isFingerExtended(landmarks, 20, 18) &&
-    areFingertipsClose(landmarks) &&
+    !areFingertipsClose(landmarks) &&
     getHorizontalDirection(landmarks) === "Forward";
 
   if (!detected) {

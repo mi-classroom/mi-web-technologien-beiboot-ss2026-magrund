@@ -56,7 +56,7 @@ export const crossIndexFingerGesture: GestureDefinition = {
 
   defaultConfiguration: {
     enabled: true,
-    minDurationMs: 500,
+    minDurationMs: 300,
   },
 
   detect,
