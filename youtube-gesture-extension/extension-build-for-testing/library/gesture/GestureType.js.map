@@ -1,0 +1,1 @@
+{"version":3,"file":"GestureType.js","sourceRoot":"","sources":["../../src/gesture/GestureType.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,MAAM,QAAQ,GAAG;IACtB,aAAa,EAAE,eAAe;IAC9B,cAAc,EAAE,gBAAgB;IAEhC,YAAY,EAAE,cAAc;IAE5B,YAAY,EAAE,cAAc;IAC5B,cAAc,EAAE,gBAAgB;IAEhC,gBAAgB,EAAE,kBAAkB;CAC5B,CAAC"}

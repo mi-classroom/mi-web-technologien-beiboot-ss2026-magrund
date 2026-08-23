@@ -1,0 +1,170 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+
+  background: transparent;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#panel {
+  width: 250px;
+  height: 330px;
+
+  padding: 10px;
+
+  border-radius: 12px;
+
+  background: rgba(18, 18, 18, 0.96);
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.45);
+
+  overflow: hidden;
+}
+
+#head {
+  display: flex;
+  align-items: center;
+
+  height: 18px;
+
+  margin-bottom: 8px;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#camera-container {
+  position: relative;
+
+  width: 100%;
+  height: 172px;
+
+  overflow: hidden;
+
+  border-radius: 8px;
+
+  background: #242424;
+}
+
+#camera-placeholder {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  color: #aaa;
+
+  font-size: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #252525,
+      #181818
+    );
+}
+
+#camera-placeholder .camera-icon {
+  font-size: 32px;
+  opacity: 0.7;
+}
+
+#camera-placeholder small {
+  margin: 0;
+
+  font-size: 9px;
+
+  color: #777;
+}
+
+#camera {
+  position: absolute;
+  inset: 0;
+
+  display: none;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  border-radius: 8px;
+
+  background: #000;
+
+  transform: scaleX(-1);
+}
+
+#status {
+  height: 16px;
+
+  margin: 8px 0;
+
+  font-size: 12px;
+
+  color: #ddd;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+button {
+  display: block;
+
+  width: 100%;
+  height: 34px;
+
+  margin: 0 0 6px;
+
+  padding: 0 8px;
+
+  border: 0;
+  border-radius: 7px;
+
+  cursor: pointer;
+
+  font-weight: 700;
+
+  background: #ff0033;
+  color: #fff;
+}
+
+button:hover {
+  filter: brightness(1.1);
+}
+
+#stop {
+  background: #444;
+  display: none;
+}
+
+#gestures {
+  display: block;
+
+  margin-top: 6px;
+
+  color: #aaa;
+
+  line-height: 1.35;
+
+  font-size: 10px;
+}

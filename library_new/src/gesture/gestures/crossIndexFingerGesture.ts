@@ -55,7 +55,7 @@ export const crossIndexFingerGesture: GestureDefinition = {
   type: Gestures.crossIndexFinger,
 
   defaultConfiguration: {
-    enabled: true,
+    enabled: false,
     minDurationMs: 300,
 
     repeat: {
