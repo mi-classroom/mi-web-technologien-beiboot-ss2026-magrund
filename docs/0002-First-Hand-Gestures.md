@@ -12,7 +12,7 @@ The task was to create and document a mapping table for at least 8 hand gestures
 
 ## Mapping table
 
-- [Mapping Table](Hand-Gestures.md)
+- [Mapping Table](/old/Hand-Gestures.md)
 
 ## Chosen Gestures
 

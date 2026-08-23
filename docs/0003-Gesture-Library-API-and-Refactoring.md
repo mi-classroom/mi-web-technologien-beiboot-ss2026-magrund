@@ -72,5 +72,5 @@ These modules can change without forcing changes for consumers, as long as the p
 
 ## Links
 
-- [Library usage guide](Gesture-Library.md)
-- [Gesture mapping table](Hand-Gestures.md)
+- [Library usage guide](/old/Gesture-Library.md)
+- [Gesture mapping table](/old/Hand-Gestures.md)

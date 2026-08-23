@@ -1,7 +1,7 @@
 node_modules/
 
 dist/
-library/
+youtube-gesture-extension/library/
 
 *.tsbuildinfo
 
@@ -11,3 +11,4 @@ npm-debug.log*
 Thumbs.db
 
 .vscode/
+
