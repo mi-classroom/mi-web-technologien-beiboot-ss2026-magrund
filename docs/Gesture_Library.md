@@ -302,64 +302,6 @@ The current built-in gestures use the following defaults:
 
 These values are defaults and can be changed for individual gestures.
 
-## Continuous Detection
-//TODO - finde ich unverständlich
-The tracker is designed to be called repeatedly, for example once per camera frame:
-
-```ts
-function onFrame(
-  leftHandLandmarks: LandmarkList | null,
-  rightHandLandmarks: LandmarkList | null,
-) {
-  const gesture = tracker.detect({
-    leftHandLandmarks,
-    rightHandLandmarks,
-  });
-
-  if (!gesture) {
-    return;
-  }
-
-  handleGesture(gesture);
-}
-```
-
-The tracker maintains the state of gestures between calls.
-
-For example, if `pistolForward` remains active:
-
-```text
-detect() → null
-detect() → null
-detect() → start
-detect() → null
-detect() → hold
-detect() → null
-detect() → hold
-```
-
-The exact events depend on the configured minimum duration and repeat interval.
-
-When the gesture is no longer detected, its internal state is reset. A later activation of the same gesture can therefore produce a new `start` event.
-
-## Using Timestamps
-
-`detect()` optionally accepts a timestamp:
-
-```ts
-tracker.detect(
-  {
-    leftHandLandmarks,
-    rightHandLandmarks,
-  },
-  timestamp,
-);
-```
-
-If no timestamp is provided, the tracker uses `Date.now()`.
-
-Passing timestamps explicitly can be useful when the application already has a timestamp associated with each camera frame.
-
 ## Public API
 
 The library intentionally exposes only a small public API:
