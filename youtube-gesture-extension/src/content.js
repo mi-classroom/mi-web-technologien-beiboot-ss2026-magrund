@@ -150,9 +150,16 @@
   }
 
   let seekCount = 0;
+  let seekResetTimer = null;
 
   function getSeekTime(duration) {
     seekCount++;
+
+    clearTimeout(seekResetTimer);
+
+    seekResetTimer = setTimeout(() => {
+      seekCount = 0;
+    }, 5000);
 
     if (seekCount <= 3) {
       return 10;
